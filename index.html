@@ -5,42 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>单词图片学习</title>
   <style>
+    @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&display=swap");
     :root {
-      --bg: #f4f6f9;
+      --bg: #fff7ed;
+      --bg-accent: #eff6ff;
       --card: #ffffff;
-      --text: #1a1d26;
-      --muted: #5c6370;
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --danger: #b91c1c;
-      --ok: #15803d;
-      --border: #e2e8f0;
-      --radius: 12px;
-      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --text: #1f2937;
+      --muted: #64748b;
+      --accent: #f97316;
+      --accent-2: #fb923c;
+      --accent-hover: #ea580c;
+      --danger: #ef4444;
+      --ok: #22c55e;
+      --border: #fed7aa;
+      --radius: 18px;
+      --pill: 9999px;
+      --shadow: 0 16px 36px rgba(249, 115, 22, 0.12);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: var(--bg);
+      font-family: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg-accent) 100%);
       color: var(--text);
       line-height: 1.5;
       min-height: 100vh;
+      border-top: 4px solid var(--accent);
     }
     .app {
-      max-width: 560px;
+      max-width: 640px;
       margin: 0 auto;
       padding: 1rem 1rem 2rem;
     }
     h1 {
-      font-size: 1.35rem;
-      font-weight: 700;
+      font-size: 1.65rem;
+      font-weight: 800;
       margin: 0 0 0.35rem;
     }
     p.lead {
       margin: 0 0 1.25rem;
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
     .panel {
       background: var(--card);
@@ -53,34 +58,69 @@
     .btn-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
+      gap: 0.6rem;
+      margin-top: 0.9rem;
     }
     button {
       font: inherit;
+      font-weight: 700;
       cursor: pointer;
       border: none;
-      border-radius: 10px;
-      padding: 0.65rem 1rem;
-      background: var(--accent);
+      border-radius: var(--pill);
+      padding: 0.7rem 1.05rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
       color: #fff;
-      transition: background 0.15s ease;
+      box-shadow: 0 8px 16px rgba(249, 115, 22, 0.25);
+      transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
     }
-    button:hover { background: var(--accent-hover); }
+    button:hover {
+      filter: brightness(1.05);
+      box-shadow: 0 10px 20px rgba(249, 115, 22, 0.35);
+    }
+    button:active { transform: scale(0.96); }
     button.secondary {
-      background: #e2e8f0;
+      background: #f8fafc;
       color: var(--text);
+      border: 1px solid #e2e8f0;
+      box-shadow: none;
     }
-    button.secondary:hover { background: #cbd5e1; }
+    button.secondary:hover { background: #eef2ff; }
     button:disabled {
       opacity: 0.55;
       cursor: not-allowed;
+      filter: grayscale(0.2);
+      box-shadow: none;
+    }
+    .home-hero {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .hero-emoji {
+      font-size: 2.1rem;
+      margin-bottom: 0.2rem;
     }
     .modes {
       display: grid;
-      gap: 0.5rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.7rem;
     }
-    .modes button { width: 100%; }
+    .mode-card {
+      border-radius: 16px;
+      padding: 0.85rem;
+      text-align: left;
+      min-height: 106px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.15rem;
+      background: #fff;
+      color: var(--text);
+      border: 1px solid #fde68a;
+      box-shadow: 0 8px 18px rgba(251, 146, 60, 0.18);
+    }
+    .mode-icon { font-size: 1.3rem; }
+    .mode-title { font-size: 1rem; font-weight: 800; }
+    .mode-desc { font-size: 0.84rem; color: var(--muted); font-weight: 600; }
     .toolbar {
       display: flex;
       flex-wrap: wrap;
@@ -89,12 +129,28 @@
       margin-bottom: 1rem;
     }
     .toolbar .spacer { flex: 1; }
+    .back-btn { padding-inline: 0.75rem; }
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #ffedd5;
+      border-radius: var(--pill);
+      overflow: hidden;
+      border: 1px solid #fdba74;
+      margin-bottom: 0.6rem;
+    }
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #f97316, #fb923c);
+      transition: width 0.25s ease;
+    }
     .figure {
       border-radius: var(--radius);
       overflow: hidden;
-      background: #eef2f7;
+      background: linear-gradient(145deg, #fff1cc, #dbeafe);
       border: 1px solid var(--border);
-      aspect-ratio: 4 / 3;
+      aspect-ratio: 1 / 1;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -107,16 +163,23 @@
       object-fit: contain;
       display: block;
     }
+    .fade-img {
+      opacity: 1;
+      transition: opacity 0.25s ease;
+    }
+    .fade-img.fading { opacity: 0; }
     .word-line {
       margin-top: 1rem;
-      font-size: 1.5rem;
-      font-weight: 600;
+      font-size: 2rem;
+      font-weight: 800;
       text-align: center;
-      min-height: 2.25rem;
-      letter-spacing: 0.02em;
+      min-height: 2.5rem;
+      letter-spacing: 0.03em;
+      text-shadow: 0 2px 12px rgba(249, 115, 22, 0.25);
     }
     .word-line.blurred {
       filter: blur(10px);
+      transition: filter 0.3s ease;
       user-select: none;
       cursor: pointer;
     }
@@ -125,67 +188,102 @@
       color: var(--muted);
       text-align: center;
       margin-top: 0.35rem;
+      font-weight: 600;
     }
     .stats {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--muted);
       margin-top: 0.5rem;
+      font-weight: 700;
     }
     .msg {
       margin-top: 0.75rem;
-      padding: 0.65rem 0.75rem;
-      border-radius: 8px;
+      padding: 0.7rem 0.85rem;
+      border-radius: 12px;
       border: 1px solid var(--border);
-      font-size: 0.95rem;
+      font-size: 0.98rem;
+      font-weight: 700;
     }
-    .msg.ok  { border-color: #86efac; background: #f0fdf4; color: #166534; }
-    .msg.bad { border-color: #fecaca; background: #fef2f2; color: #991b1b; }
+    .msg.ok {
+      border-color: #86efac;
+      background: #f0fdf4;
+      color: #166534;
+      animation: pop 0.28s ease;
+    }
+    .msg.bad {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+      animation: shake 0.28s ease;
+    }
     label.inline {
       display: flex;
       align-items: center;
       gap: 0.4rem;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--muted);
       user-select: none;
+      font-weight: 700;
     }
     input[type="text"] {
       width: 100%;
       font: inherit;
-      padding: 0.65rem 0.75rem;
-      border-radius: 10px;
-      border: 1px solid var(--border);
+      font-size: 1.02rem;
+      padding: 0.75rem 0.85rem;
+      border-radius: 14px;
+      border: 1px solid #fed7aa;
       margin-top: 0.75rem;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
     }
     input[type="text"]:focus {
-      outline: 2px solid rgba(37, 99, 235, 0.35);
+      outline: none;
       border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.22);
     }
     .options {
       display: grid;
-      gap: 0.5rem;
+      gap: 0.55rem;
       margin-top: 0.75rem;
     }
     .options button.option {
       background: #fff;
       color: var(--text);
-      border: 2px solid var(--border);
+      border: 2px solid #fed7aa;
       text-align: left;
+      border-radius: 14px;
+      box-shadow: none;
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
     }
     .options button.option:hover:not(:disabled) {
       border-color: var(--accent);
-      background: #eff6ff;
+      background: #fff7ed;
     }
     .options button.option.correct {
       border-color: #22c55e;
       background: #f0fdf4;
     }
     .options button.option.wrong {
-      border-color: #f87171;
+      border-color: #ef4444;
       background: #fef2f2;
     }
     .empty {
       color: var(--muted);
       font-size: 0.95rem;
+    }
+    @keyframes pop {
+      0% { transform: scale(0.8); }
+      70% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-4px); }
+    }
+    @media (max-width: 520px) {
+      .modes { grid-template-columns: 1fr; }
+      .mode-card { min-height: 96px; }
     }
   </style>
 </head>
@@ -194,28 +292,48 @@
 
   <!-- 首页 -->
   <section id="view-home" class="panel">
-    <h1>单词图片学习</h1>
-    <p class="lead">图片放在与本页同级的 <code>images</code> 文件夹，在脚本里编辑 <code>VOCAB</code> 词表，双击本页即可使用。</p>
+    <div class="home-hero">
+      <div class="hero-emoji">🌈📚🧠</div>
+      <h1>单词图片学习</h1>
+      <p class="lead">图片放在与本页同级的 <code>images</code> 文件夹，在脚本里编辑 <code>VOCAB</code> 词表，双击本页即可使用。</p>
+    </div>
     <p id="home-empty" class="empty hidden">词表为空：请先在 <code>VOCAB</code> 中添加条目。</p>
     <div class="modes">
-      <button type="button" id="go-flash">卡片模式</button>
-      <button type="button" id="go-quiz">测验模式（看图选词）</button>
-      <button type="button" id="go-spell">拼写模式</button>
-      <button type="button" id="go-first">首字母模式</button>
+      <button type="button" id="go-flash" class="mode-card">
+        <span class="mode-icon">🃏</span>
+        <span class="mode-title">卡片模式</span>
+        <span class="mode-desc">看图记词，点击翻面</span>
+      </button>
+      <button type="button" id="go-quiz" class="mode-card">
+        <span class="mode-icon">🎯</span>
+        <span class="mode-title">测验模式</span>
+        <span class="mode-desc">看图选词，马上反馈</span>
+      </button>
+      <button type="button" id="go-spell" class="mode-card">
+        <span class="mode-icon">✍️</span>
+        <span class="mode-title">拼写模式</span>
+        <span class="mode-desc">输入完整英文单词</span>
+      </button>
+      <button type="button" id="go-first" class="mode-card">
+        <span class="mode-icon">🔤</span>
+        <span class="mode-title">首字母模式</span>
+        <span class="mode-desc">只输入首字母即可</span>
+      </button>
     </div>
   </section>
 
   <!-- 卡片模式 -->
   <section id="view-flash" class="panel hidden">
     <div class="toolbar">
-      <button type="button" class="secondary" data-back>返回</button>
+      <button type="button" class="secondary back-btn" data-back>← 返回</button>
       <span class="spacer"></span>
       <button type="button" class="secondary" id="flash-shuffle">打乱顺序</button>
     </div>
     <p class="stats" id="flash-stats"></p>
-    <div class="figure"><img id="flash-img" alt="" /></div>
+    <div class="progress-bar"><div class="progress-fill" id="flash-progress"></div></div>
+    <div class="figure"><img id="flash-img" class="fade-img" alt="" /></div>
     <div class="word-line blurred" id="flash-word" title="点击显示/隐藏单词"></div>
-    <p class="hint">点击图片或单词可翻面显示／隐藏单词</p>
+    <p class="hint">点击图片或单词可翻面；按空格键也可显示／隐藏单词</p>
     <div class="btn-row">
       <button type="button" class="secondary" id="flash-prev">上一张</button>
       <button type="button" class="secondary" id="flash-next">下一张</button>
@@ -225,11 +343,11 @@
   <!-- 测验模式 -->
   <section id="view-quiz" class="panel hidden">
     <div class="toolbar">
-      <button type="button" class="secondary" data-back>返回</button>
+      <button type="button" class="secondary back-btn" data-back>← 返回</button>
       <span class="spacer"></span>
       <span class="stats" id="quiz-stats"></span>
     </div>
-    <div class="figure"><img id="quiz-img" alt="" /></div>
+    <div class="figure"><img id="quiz-img" class="fade-img" alt="" /></div>
     <div class="options" id="quiz-options"></div>
     <p id="quiz-msg" class="msg hidden" role="status"></p>
     <div class="btn-row">
@@ -240,11 +358,11 @@
   <!-- 拼写模式 -->
   <section id="view-spell" class="panel hidden">
     <div class="toolbar">
-      <button type="button" class="secondary" data-back>返回</button>
+      <button type="button" class="secondary back-btn" data-back>← 返回</button>
       <span class="spacer"></span>
       <span class="stats" id="spell-stats"></span>
     </div>
-    <div class="figure"><img id="spell-img" alt="" /></div>
+    <div class="figure"><img id="spell-img" class="fade-img" alt="" /></div>
     <label class="inline" style="margin-top:0.75rem">
       <input type="checkbox" id="spell-hint-toggle" />
       显示首字母提示
@@ -261,11 +379,11 @@
   <!-- 首字母模式 -->
   <section id="view-first" class="panel hidden">
     <div class="toolbar">
-      <button type="button" class="secondary" data-back>返回</button>
+      <button type="button" class="secondary back-btn" data-back>← 返回</button>
       <span class="spacer"></span>
       <span class="stats" id="first-stats"></span>
     </div>
-    <div class="figure"><img id="first-img" alt="" /></div>
+    <div class="figure"><img id="first-img" class="fade-img" alt="" /></div>
     <input type="text" id="first-input" autocomplete="off" spellcheck="false" maxlength="8"
            placeholder="输入该词的首字母后按 Enter" />
     <p id="first-msg" class="msg hidden" role="status"></p>
@@ -527,6 +645,15 @@
     btn.addEventListener("click", () => showView("home"));
   });
 
+  function setImageWithFade(imgEl, src, alt) {
+    imgEl.classList.add("fading");
+    setTimeout(() => {
+      imgEl.src = src;
+      imgEl.alt = alt;
+      imgEl.classList.remove("fading");
+    }, 80);
+  }
+
   /* ===== 首页 ===== */
   const homeEmpty = document.getElementById("home-empty");
   homeEmpty.classList.toggle("hidden", VOCAB.length > 0);
@@ -549,14 +676,15 @@
   const flashImg   = document.getElementById("flash-img");
   const flashWord  = document.getElementById("flash-word");
   const flashStats = document.getElementById("flash-stats");
+  const flashProgress = document.getElementById("flash-progress");
 
   function renderFlash() {
     const e = VOCAB[flashOrder[flashPos]];
-    flashImg.src = e.file;
-    flashImg.alt = e.word;
+    setImageWithFade(flashImg, e.file, e.word);
     flashWord.textContent = e.word;
     flashWord.classList.toggle("blurred", !flashReveal);
     flashStats.textContent = `第 ${flashPos + 1} / ${flashOrder.length} 张`;
+    flashProgress.style.width = `${((flashPos + 1) / flashOrder.length) * 100}%`;
   }
 
   function startFlash() {
@@ -598,6 +726,10 @@
     if (views.flash.classList.contains("hidden")) return;
     if (ev.key === "ArrowLeft")  { ev.preventDefault(); document.getElementById("flash-prev").click(); }
     if (ev.key === "ArrowRight") { ev.preventDefault(); document.getElementById("flash-next").click(); }
+    if (ev.key === " " || ev.code === "Space") {
+      ev.preventDefault();
+      toggleFlashReveal();
+    }
   });
 
   /* ===== 测验模式 ===== */
@@ -626,8 +758,7 @@
 
     const idx = randomInt(VOCAB.length);
     quizCurrent = VOCAB[idx];
-    quizImg.src = quizCurrent.file;
-    quizImg.alt = quizCurrent.word;
+    setImageWithFade(quizImg, quizCurrent.file, quizCurrent.word);
 
     const need = Math.min(3, VOCAB.length - 1);
     const wrong = pickDistinctWords(quizCurrent.word, need);
@@ -714,8 +845,7 @@
       spellIndex = 0;
     }
     spellCurrent = VOCAB[spellQueue[spellIndex++]];
-    spellImg.src = spellCurrent.file;
-    spellImg.alt = spellCurrent.word;
+    setImageWithFade(spellImg, spellCurrent.file, spellCurrent.word);
     updateSpellHint();
     spellInput.focus();
   }
@@ -783,8 +913,7 @@
       firstIndex = 0;
     }
     firstCurrent = VOCAB[firstQueue[firstIndex++]];
-    firstImg.src = firstCurrent.file;
-    firstImg.alt = firstCurrent.word;
+    setImageWithFade(firstImg, firstCurrent.file, firstCurrent.word);
     firstInput.focus();
   }
 
