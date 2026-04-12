@@ -270,6 +270,51 @@
       color: var(--muted);
       font-size: 0.95rem;
     }
+    .wordbook-entry {
+      margin-top: 0.8rem;
+    }
+    .wordbook-panel-title {
+      margin: 0 0 0.35rem;
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+    .wordbook-list {
+      margin-top: 0.9rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+    .wordbook-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid #fed7aa;
+      background: #fff7ed;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+    .wordbook-item .word {
+      overflow-wrap: anywhere;
+    }
+    .wordbook-empty {
+      color: var(--muted);
+      background: #fff7ed;
+      border: 1px dashed #fdba74;
+      border-radius: 12px;
+      padding: 0.7rem 0.8rem;
+      font-weight: 700;
+    }
+    .answer-line {
+      margin-top: 0.55rem;
+      padding: 0.55rem 0.65rem;
+      border-radius: 10px;
+      border: 1px solid #fdba74;
+      background: #fff7ed;
+      color: #9a3412;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
     @keyframes pop {
       0% { transform: scale(0.8); }
       70% { transform: scale(1.05); }
@@ -319,6 +364,9 @@
         <span class="mode-title">首字母模式</span>
         <span class="mode-desc">只输入首字母即可</span>
       </button>
+    </div>
+    <div class="wordbook-entry">
+      <button type="button" id="go-wordbook" class="secondary">生词本</button>
     </div>
   </section>
 
@@ -370,9 +418,12 @@
     <p id="spell-hint" class="hint hidden"></p>
     <input type="text" id="spell-input" autocomplete="off" spellcheck="false" placeholder="输入完整单词后按 Enter" />
     <p id="spell-msg" class="msg hidden" role="status"></p>
+    <p id="spell-answer-line" class="answer-line hidden"></p>
     <div class="btn-row">
       <button type="button" id="spell-submit">提交</button>
       <button type="button" class="secondary" id="spell-skip">下一题</button>
+      <button type="button" class="secondary" id="spell-show-answer">查看答案</button>
+      <button type="button" class="secondary" id="spell-add-wordbook">加入生词本</button>
     </div>
   </section>
 
@@ -387,10 +438,24 @@
     <input type="text" id="first-input" autocomplete="off" spellcheck="false" maxlength="8"
            placeholder="输入该词的首字母后按 Enter" />
     <p id="first-msg" class="msg hidden" role="status"></p>
+    <p id="first-answer-line" class="answer-line hidden"></p>
     <div class="btn-row">
       <button type="button" id="first-submit">提交</button>
       <button type="button" class="secondary" id="first-skip">下一题</button>
+      <button type="button" class="secondary" id="first-show-answer">查看答案</button>
+      <button type="button" class="secondary" id="first-add-wordbook">加入生词本</button>
     </div>
+  </section>
+
+  <!-- 生词本 -->
+  <section id="view-wordbook" class="panel hidden">
+    <div class="toolbar">
+      <button type="button" class="secondary back-btn" data-back>← 返回</button>
+      <span class="spacer"></span>
+    </div>
+    <h2 class="wordbook-panel-title">生词本</h2>
+    <p class="hint" style="text-align:left;">已保存到当前浏览器本地存储（localStorage）。</p>
+    <div id="wordbook-list" class="wordbook-list"></div>
   </section>
 
 </div><!-- /.app -->
@@ -607,6 +672,66 @@
     { word: "zoo", file: "images/zoo.png" },
   ];
 
+  const WORDBOOK_KEY = "pk_wordbook_v1";
+
+  function loadWordbook() {
+    try {
+      const raw = localStorage.getItem(WORDBOOK_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return [...new Set(parsed.filter((w) => typeof w === "string"))];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveWordbook(words) {
+    const normalized = [...new Set(words.filter((w) => typeof w === "string"))];
+    localStorage.setItem(WORDBOOK_KEY, JSON.stringify(normalized));
+  }
+
+  function hasInWordbook(word) {
+    return loadWordbook().includes(word);
+  }
+
+  function addToWordbook(word) {
+    const words = loadWordbook();
+    if (words.includes(word)) return false;
+    words.push(word);
+    saveWordbook(words);
+    return true;
+  }
+
+  function removeFromWordbook(word) {
+    const words = loadWordbook().filter((w) => w !== word);
+    saveWordbook(words);
+  }
+
+  function getWordbookVocabIndices() {
+    const wordSet = new Set(loadWordbook());
+    const indices = [];
+    for (let i = 0; i < VOCAB.length; i += 1) {
+      if (wordSet.has(VOCAB[i].word)) indices.push(i);
+    }
+    return indices;
+  }
+
+  function buildPrioritizedQueue() {
+    const wb = getWordbookVocabIndices();
+    const wbSet = new Set(wb);
+    const other = VOCAB.map((_, i) => i).filter((i) => !wbSet.has(i));
+    shuffleInPlace(wb);
+    shuffleInPlace(other);
+    return wb.length ? [...wb, ...other] : shuffleInPlace(VOCAB.map((_, i) => i));
+  }
+
+  function pickWeightedVocabIndex() {
+    const wb = getWordbookVocabIndices();
+    if (wb.length > 0) return wb[randomInt(wb.length)];
+    return randomInt(VOCAB.length);
+  }
+
   /* ===== 工具函数 ===== */
   function shuffleInPlace(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -633,6 +758,7 @@
     quiz:  document.getElementById("view-quiz"),
     spell: document.getElementById("view-spell"),
     first: document.getElementById("view-first"),
+    wordbook: document.getElementById("view-wordbook"),
   };
 
   function showView(name) {
@@ -667,6 +793,36 @@
   document.getElementById("go-quiz").addEventListener("click",  () => guardVocab(startQuiz));
   document.getElementById("go-spell").addEventListener("click", () => guardVocab(startSpell));
   document.getElementById("go-first").addEventListener("click", () => guardVocab(startFirst));
+  document.getElementById("go-wordbook").addEventListener("click", () => {
+    renderWordbook();
+    showView("wordbook");
+  });
+
+  const wordbookList = document.getElementById("wordbook-list");
+  function renderWordbook() {
+    const indices = getWordbookVocabIndices();
+    if (!indices.length) {
+      wordbookList.innerHTML = '<div class="wordbook-empty">生词本暂时为空。</div>';
+      return;
+    }
+    wordbookList.innerHTML = "";
+    indices.forEach((idx) => {
+      const item = document.createElement("div");
+      item.className = "wordbook-item";
+      const word = VOCAB[idx].word;
+      item.innerHTML = `<span class="word">${word}</span>`;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "secondary";
+      btn.textContent = "移除";
+      btn.addEventListener("click", () => {
+        removeFromWordbook(word);
+        renderWordbook();
+      });
+      item.appendChild(btn);
+      wordbookList.appendChild(item);
+    });
+  }
 
   /* ===== 卡片模式 ===== */
   let flashOrder = [];
@@ -756,7 +912,7 @@
     quizNext.classList.add("hidden");
     quizOptions.innerHTML = "";
 
-    const idx = randomInt(VOCAB.length);
+    const idx = pickWeightedVocabIndex();
     quizCurrent = VOCAB[idx];
     setImageWithFade(quizImg, quizCurrent.file, quizCurrent.word);
 
@@ -841,12 +997,13 @@
     spellMsg.classList.add("hidden");
     spellInput.value = "";
     if (!spellQueue.length || spellIndex >= spellQueue.length) {
-      spellQueue = shuffleInPlace(VOCAB.map((_, i) => i));
+      spellQueue = buildPrioritizedQueue();
       spellIndex = 0;
     }
     spellCurrent = VOCAB[spellQueue[spellIndex++]];
     setImageWithFade(spellImg, spellCurrent.file, spellCurrent.word);
     updateSpellHint();
+    spellAnswerLine.classList.add("hidden");
     spellInput.focus();
   }
 
@@ -883,6 +1040,19 @@
   spellHintToggle.addEventListener("change", updateSpellHint);
   document.getElementById("spell-submit").addEventListener("click", checkSpell);
   document.getElementById("spell-skip").addEventListener("click", nextSpellWord);
+  const spellAnswerLine = document.getElementById("spell-answer-line");
+  document.getElementById("spell-show-answer").addEventListener("click", () => {
+    if (!spellCurrent) return;
+    spellAnswerLine.textContent = `答案：${spellCurrent.word}`;
+    spellAnswerLine.classList.remove("hidden");
+  });
+  document.getElementById("spell-add-wordbook").addEventListener("click", () => {
+    if (!spellCurrent) return;
+    const added = addToWordbook(spellCurrent.word);
+    spellMsg.textContent = added ? "已加入生词本。" : "该单词已在生词本中。";
+    spellMsg.className = added ? "msg ok" : "msg bad";
+    spellMsg.classList.remove("hidden");
+  });
   spellInput.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter") { ev.preventDefault(); checkSpell(); }
   });
@@ -909,11 +1079,12 @@
     firstMsg.classList.add("hidden");
     firstInput.value = "";
     if (!firstQueue.length || firstIndex >= firstQueue.length) {
-      firstQueue = shuffleInPlace(VOCAB.map((_, i) => i));
+      firstQueue = buildPrioritizedQueue();
       firstIndex = 0;
     }
     firstCurrent = VOCAB[firstQueue[firstIndex++]];
     setImageWithFade(firstImg, firstCurrent.file, firstCurrent.word);
+    firstAnswerLine.classList.add("hidden");
     firstInput.focus();
   }
 
@@ -956,6 +1127,19 @@
 
   document.getElementById("first-submit").addEventListener("click", checkFirst);
   document.getElementById("first-skip").addEventListener("click", nextFirstWord);
+  const firstAnswerLine = document.getElementById("first-answer-line");
+  document.getElementById("first-show-answer").addEventListener("click", () => {
+    if (!firstCurrent) return;
+    firstAnswerLine.textContent = `答案：${firstCurrent.word}`;
+    firstAnswerLine.classList.remove("hidden");
+  });
+  document.getElementById("first-add-wordbook").addEventListener("click", () => {
+    if (!firstCurrent) return;
+    const added = addToWordbook(firstCurrent.word);
+    firstMsg.textContent = added ? "已加入生词本。" : "该单词已在生词本中。";
+    firstMsg.className = added ? "msg ok" : "msg bad";
+    firstMsg.classList.remove("hidden");
+  });
   firstInput.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter") { ev.preventDefault(); checkFirst(); }
   });
