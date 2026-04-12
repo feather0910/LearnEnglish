@@ -130,6 +130,46 @@
     }
     .toolbar .spacer { flex: 1; }
     .back-btn { padding-inline: 0.75rem; }
+    .flash-alphabet {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+      justify-content: center;
+    }
+    .flash-alphabet button.flash-letter {
+      min-width: 2rem;
+      padding: 0.35rem 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      border-radius: 8px;
+      background: #fff7ed;
+      color: var(--text);
+      border: 1px solid #fdba74;
+      box-shadow: none;
+    }
+    .flash-alphabet button.flash-letter:hover {
+      background: #ffedd5;
+      filter: none;
+    }
+    .flash-alphabet button.flash-letter.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      border-color: transparent;
+    }
+    .flash-zh {
+      margin-top: 0.35rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-align: center;
+      color: #9a3412;
+      min-height: 1.5rem;
+      letter-spacing: 0.02em;
+    }
+    .flash-zh.concealed {
+      visibility: hidden;
+      min-height: 1.5rem;
+    }
     .progress-bar {
       width: 100%;
       height: 10px;
@@ -400,11 +440,13 @@
       <span class="spacer"></span>
       <button type="button" class="secondary" id="flash-shuffle">打乱顺序</button>
     </div>
+    <div class="flash-alphabet" id="flash-alphabet" aria-label="按首字母筛选"></div>
     <p class="stats" id="flash-stats"></p>
     <div class="progress-bar"><div class="progress-fill" id="flash-progress"></div></div>
     <div class="figure"><img id="flash-img" class="fade-img" alt="" /></div>
     <div class="word-line concealed" id="flash-word" title="点击显示/隐藏单词" data-word="" aria-hidden="true"></div>
-    <p class="hint">点击图片或空白处可翻面；隐藏时单词完全不可见（非模糊）；按空格键也可显示／隐藏</p>
+    <div class="flash-zh concealed" id="flash-zh" title="点击显示/隐藏"></div>
+    <p class="hint">点击图片或英文/中文区域可翻面；隐藏时单词与中文均不可见；按空格键也可显示／隐藏。点字母筛选，再点同一字母取消。</p>
     <div class="btn-row">
       <button type="button" class="secondary" id="flash-prev">上一张</button>
       <button type="button" class="secondary" id="flash-next">下一张</button>
@@ -884,31 +926,112 @@
   let flashOrder = [];
   let flashPos = 0;
   let flashReveal = false;
+  let flashFilterLetter = null;
 
   const flashImg   = document.getElementById("flash-img");
   const flashWord  = document.getElementById("flash-word");
+  const flashZh    = document.getElementById("flash-zh");
   const flashStats = document.getElementById("flash-stats");
   const flashProgress = document.getElementById("flash-progress");
+  const flashAlphabet = document.getElementById("flash-alphabet");
+
+  for (let i = 0; i < 26; i += 1) {
+    const ch = String.fromCharCode(65 + i);
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "flash-letter";
+    b.dataset.letter = ch;
+    b.textContent = ch;
+    b.addEventListener("click", onFlashLetterClick);
+    flashAlphabet.appendChild(b);
+  }
+
+  function firstFlashLetter(word) {
+    const t = (word || "").trim();
+    if (!t) return "";
+    const c = t.charAt(0).toLowerCase();
+    return /[a-z]/.test(c) ? c : "";
+  }
+
+  function buildFlashOrder() {
+    const all = VOCAB.map((_, idx) => idx);
+    const letter = flashFilterLetter ? flashFilterLetter.toLowerCase() : null;
+    const pool = letter
+      ? all.filter((idx) => firstFlashLetter(VOCAB[idx].word) === letter)
+      : all.slice();
+    shuffleInPlace(pool);
+    return pool;
+  }
+
+  function syncFlashLetterButtons() {
+    flashAlphabet.querySelectorAll("button.flash-letter").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.letter === flashFilterLetter);
+    });
+  }
+
+  function onFlashLetterClick(ev) {
+    const btn = ev.target.closest("button.flash-letter");
+    if (!btn) return;
+    const L = btn.dataset.letter;
+    if (flashFilterLetter === L) flashFilterLetter = null;
+    else flashFilterLetter = L;
+    syncFlashLetterButtons();
+    const next = buildFlashOrder();
+    if (!next.length) {
+      flashFilterLetter = null;
+      syncFlashLetterButtons();
+      flashOrder = buildFlashOrder();
+      flashPos = 0;
+      flashReveal = false;
+      renderFlash();
+      flashStats.textContent = "该首字母下暂无单词，已取消筛选。";
+      return;
+    }
+    flashOrder = next;
+    flashPos = 0;
+    flashReveal = false;
+    renderFlash();
+  }
 
   function renderFlash() {
+    if (!flashOrder.length) {
+      flashWord.textContent = "";
+      flashWord.dataset.word = "";
+      flashWord.dataset.zh = "";
+      flashWord.classList.add("concealed");
+      flashWord.setAttribute("aria-hidden", "true");
+      flashZh.textContent = "";
+      flashZh.classList.add("concealed");
+      flashStats.textContent = "当前没有可显示的卡片。";
+      flashProgress.style.width = "0%";
+      return;
+    }
     const e = VOCAB[flashOrder[flashPos]];
     setImageWithFade(flashImg, e.file, e.word);
     flashWord.dataset.word = e.word;
+    flashWord.dataset.zh = e.zh != null ? String(e.zh) : "";
+    flashZh.dataset.zh = flashWord.dataset.zh;
     if (flashReveal) {
       flashWord.textContent = e.word;
       flashWord.classList.remove("concealed");
       flashWord.setAttribute("aria-hidden", "false");
+      flashZh.textContent = flashZh.dataset.zh || "";
+      flashZh.classList.remove("concealed");
     } else {
       flashWord.textContent = "";
       flashWord.classList.add("concealed");
       flashWord.setAttribute("aria-hidden", "true");
+      flashZh.textContent = "";
+      flashZh.classList.add("concealed");
     }
     flashStats.textContent = `第 ${flashPos + 1} / ${flashOrder.length} 张`;
     flashProgress.style.width = `${((flashPos + 1) / flashOrder.length) * 100}%`;
   }
 
   function startFlash() {
-    flashOrder = VOCAB.map((_, i) => i);
+    flashFilterLetter = null;
+    syncFlashLetterButtons();
+    flashOrder = buildFlashOrder();
     flashPos = 0;
     flashReveal = false;
     showView("flash");
@@ -916,6 +1039,7 @@
   }
 
   document.getElementById("flash-shuffle").addEventListener("click", () => {
+    if (!flashOrder.length) return;
     shuffleInPlace(flashOrder);
     flashPos = 0;
     flashReveal = false;
@@ -923,36 +1047,46 @@
   });
 
   document.getElementById("flash-prev").addEventListener("click", () => {
+    if (!flashOrder.length) return;
     flashPos = (flashPos - 1 + flashOrder.length) % flashOrder.length;
     flashReveal = false;
     renderFlash();
   });
 
   document.getElementById("flash-next").addEventListener("click", () => {
+    if (!flashOrder.length) return;
     flashPos = (flashPos + 1) % flashOrder.length;
     flashReveal = false;
     renderFlash();
   });
 
   function toggleFlashReveal() {
+    if (!flashOrder.length) return;
     flashReveal = !flashReveal;
     const w = flashWord.dataset.word || "";
+    const z = flashZh.dataset.zh || "";
     if (flashReveal) {
       flashWord.textContent = w;
       flashWord.classList.remove("concealed");
       flashWord.setAttribute("aria-hidden", "false");
+      flashZh.textContent = z;
+      flashZh.classList.remove("concealed");
     } else {
       flashWord.textContent = "";
       flashWord.classList.add("concealed");
       flashWord.setAttribute("aria-hidden", "true");
+      flashZh.textContent = "";
+      flashZh.classList.add("concealed");
     }
   }
 
   flashWord.addEventListener("click", toggleFlashReveal);
+  flashZh.addEventListener("click", toggleFlashReveal);
   flashImg.addEventListener("click",  toggleFlashReveal);
 
   document.addEventListener("keydown", (ev) => {
     if (views.flash.classList.contains("hidden")) return;
+    if (!flashOrder.length) return;
     if (ev.key === "ArrowLeft")  { ev.preventDefault(); document.getElementById("flash-prev").click(); }
     if (ev.key === "ArrowRight") { ev.preventDefault(); document.getElementById("flash-next").click(); }
     if (ev.key === " " || ev.code === "Space") {
