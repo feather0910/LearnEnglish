@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>单词图片学习</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #1a1d26;
+      --muted: #5c6370;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --danger: #b91c1c;
+      --ok: #15803d;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    .app {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 1rem 1rem 2rem;
+    }
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 0 0 0.35rem;
+    }
+    p.lead {
+      margin: 0 0 1.25rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+    }
+    .hidden { display: none !important; }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      padding: 0.65rem 1rem;
+      background: var(--accent);
+      color: #fff;
+      transition: background 0.15s ease;
+    }
+    button:hover { background: var(--accent-hover); }
+    button.secondary {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+    button.secondary:hover { background: #cbd5e1; }
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .modes {
+      display: grid;
+      gap: 0.5rem;
+    }
+    .modes button { width: 100%; }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .toolbar .spacer { flex: 1; }
+    .figure {
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #eef2f7;
+      border: 1px solid var(--border);
+      aspect-ratio: 4 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .figure img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+    }
+    .word-line {
+      margin-top: 1rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      min-height: 2.25rem;
+      letter-spacing: 0.02em;
+    }
+    .word-line.blurred {
+      filter: blur(10px);
+      user-select: none;
+      cursor: pointer;
+    }
+    .hint {
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 0.35rem;
+    }
+    .stats {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+    .msg {
+      margin-top: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+    .msg.ok  { border-color: #86efac; background: #f0fdf4; color: #166534; }
+    .msg.bad { border-color: #fecaca; background: #fef2f2; color: #991b1b; }
+    label.inline {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      user-select: none;
+    }
+    input[type="text"] {
+      width: 100%;
+      font: inherit;
+      padding: 0.65rem 0.75rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-top: 0.75rem;
+    }
+    input[type="text"]:focus {
+      outline: 2px solid rgba(37, 99, 235, 0.35);
+      border-color: var(--accent);
+    }
+    .options {
+      display: grid;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    .options button.option {
+      background: #fff;
+      color: var(--text);
+      border: 2px solid var(--border);
+      text-align: left;
+    }
+    .options button.option:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: #eff6ff;
+    }
+    .options button.option.correct {
+      border-color: #22c55e;
+      background: #f0fdf4;
+    }
+    .options button.option.wrong {
+      border-color: #f87171;
+      background: #fef2f2;
+    }
+    .empty {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 首页 -->
+  <section id="view-home" class="panel">
+    <h1>单词图片学习</h1>
+    <p class="lead">图片放在与本页同级的 <code>images</code> 文件夹，在脚本里编辑 <code>VOCAB</code> 词表，双击本页即可使用。</p>
+    <p id="home-empty" class="empty hidden">词表为空：请先在 <code>VOCAB</code> 中添加条目。</p>
+    <div class="modes">
+      <button type="button" id="go-flash">卡片模式</button>
+      <button type="button" id="go-quiz">测验模式（看图选词）</button>
+      <button type="button" id="go-spell">拼写模式</button>
+      <button type="button" id="go-first">首字母模式</button>
+    </div>
+  </section>
+
+  <!-- 卡片模式 -->
+  <section id="view-flash" class="panel hidden">
+    <div class="toolbar">
+      <button type="button" class="secondary" data-back>返回</button>
+      <span class="spacer"></span>
+      <button type="button" class="secondary" id="flash-shuffle">打乱顺序</button>
+    </div>
+    <p class="stats" id="flash-stats"></p>
+    <div class="figure"><img id="flash-img" alt="" /></div>
+    <div class="word-line blurred" id="flash-word" title="点击显示/隐藏单词"></div>
+    <p class="hint">点击图片或单词可翻面显示／隐藏单词</p>
+    <div class="btn-row">
+      <button type="button" class="secondary" id="flash-prev">上一张</button>
+      <button type="button" class="secondary" id="flash-next">下一张</button>
+    </div>
+  </section>
+
+  <!-- 测验模式 -->
+  <section id="view-quiz" class="panel hidden">
+    <div class="toolbar">
+      <button type="button" class="secondary" data-back>返回</button>
+      <span class="spacer"></span>
+      <span class="stats" id="quiz-stats"></span>
+    </div>
+    <div class="figure"><img id="quiz-img" alt="" /></div>
+    <div class="options" id="quiz-options"></div>
+    <p id="quiz-msg" class="msg hidden" role="status"></p>
+    <div class="btn-row">
+      <button type="button" id="quiz-next" class="hidden">下一题</button>
+    </div>
+  </section>
+
+  <!-- 拼写模式 -->
+  <section id="view-spell" class="panel hidden">
+    <div class="toolbar">
+      <button type="button" class="secondary" data-back>返回</button>
+      <span class="spacer"></span>
+      <span class="stats" id="spell-stats"></span>
+    </div>
+    <div class="figure"><img id="spell-img" alt="" /></div>
+    <label class="inline" style="margin-top:0.75rem">
+      <input type="checkbox" id="spell-hint-toggle" />
+      显示首字母提示
+    </label>
+    <p id="spell-hint" class="hint hidden"></p>
+    <input type="text" id="spell-input" autocomplete="off" spellcheck="false" placeholder="输入完整单词后按 Enter" />
+    <p id="spell-msg" class="msg hidden" role="status"></p>
+    <div class="btn-row">
+      <button type="button" id="spell-submit">提交</button>
+      <button type="button" class="secondary" id="spell-skip">下一题</button>
+    </div>
+  </section>
+
+  <!-- 首字母模式 -->
+  <section id="view-first" class="panel hidden">
+    <div class="toolbar">
+      <button type="button" class="secondary" data-back>返回</button>
+      <span class="spacer"></span>
+      <span class="stats" id="first-stats"></span>
+    </div>
+    <div class="figure"><img id="first-img" alt="" /></div>
+    <input type="text" id="first-input" autocomplete="off" spellcheck="false" maxlength="8"
+           placeholder="输入该词的首字母后按 Enter" />
+    <p id="first-msg" class="msg hidden" role="status"></p>
+    <div class="btn-row">
+      <button type="button" id="first-submit">提交</button>
+      <button type="button" class="secondary" id="first-skip">下一题</button>
+    </div>
+  </section>
+
+</div><!-- /.app -->
+
+<script>
+  /* ===== 词表（从 images/ 文件夹扫描生成，每条对应一个图片文件） ===== */
+  const VOCAB = [
+    { word: "alligator", file: "images/alligator.png" },
+    { word: "ant", file: "images/ant.png" },
+    { word: "apple", file: "images/apple.png" },
+    { word: "ax", file: "images/ax.png" },
+    { word: "ball", file: "images/ball.png" },
+    { word: "balloon", file: "images/balloon.png" },
+    { word: "bat", file: "images/bat.png" },
+    { word: "block", file: "images/block.png" },
+    { word: "boot", file: "images/boot.png" },
+    { word: "bottle", file: "images/bottle.png" },
+    { word: "bow", file: "images/bow.png" },
+    { word: "box", file: "images/box.png" },
+    { word: "brush", file: "images/brush.png" },
+    { word: "bus", file: "images/bus.png" },
+    { word: "can", file: "images/can.png" },
+    { word: "candle", file: "images/candle.png" },
+    { word: "cap", file: "images/cap.png" },
+    { word: "card", file: "images/card.png" },
+    { word: "cat", file: "images/cat.png" },
+    { word: "chick", file: "images/chick.png" },
+    { word: "chimney", file: "images/chimney.png" },
+    { word: "clock", file: "images/clock.png" },
+    { word: "coat", file: "images/coat.png" },
+    { word: "comb", file: "images/comb.png" },
+    { word: "crib", file: "images/crib.png" },
+    { word: "cup", file: "images/cup.png" },
+    { word: "deer", file: "images/deer.png" },
+    { word: "desk", file: "images/desk.png" },
+    { word: "dinosaur", file: "images/dinosaur.png" },
+    { word: "disc", file: "images/disc.png" },
+    { word: "dishes", file: "images/dishes.png" },
+    { word: "dive", file: "images/dive.png" },
+    { word: "doctor", file: "images/doctor.png" },
+    { word: "dog", file: "images/dog.png" },
+    { word: "doll", file: "images/doll.png" },
+    { word: "door", file: "images/door.png" },
+    { word: "drum", file: "images/drum.png" },
+    { word: "duck", file: "images/duck.png" },
+    { word: "egg", file: "images/egg.png" },
+    { word: "elbow", file: "images/elbow.png" },
+    { word: "elephant", file: "images/elephant.png" },
+    { word: "eskimo", file: "images/eskimo.png" },
+    { word: "fan", file: "images/fan.png" },
+    { word: "feather", file: "images/feather.png" },
+    { word: "fire", file: "images/fire.png" },
+    { word: "fish", file: "images/fish.png" },
+    { word: "five", file: "images/five.png" },
+    { word: "foot", file: "images/foot.png" },
+    { word: "football", file: "images/football.png" },
+    { word: "fork", file: "images/fork.png" },
+    { word: "four", file: "images/four.png" },
+    { word: "fox", file: "images/fox.png" },
+    { word: "game", file: "images/game.png" },
+    { word: "garage", file: "images/garage.png" },
+    { word: "garden", file: "images/garden.png" },
+    { word: "gas pump", file: "images/gas pump.png" },
+    { word: "gate", file: "images/gate.png" },
+    { word: "girl", file: "images/girl.png" },
+    { word: "goat", file: "images/goat.png" },
+    { word: "goose", file: "images/goose.png" },
+    { word: "guitar", file: "images/guitar.png" },
+    { word: "ham", file: "images/ham.png" },
+    { word: "hammer", file: "images/hammer.png" },
+    { word: "hand", file: "images/hand.png" },
+    { word: "hanger", file: "images/hanger.png" },
+    { word: "hat", file: "images/hat.png" },
+    { word: "helicopter", file: "images/helicopter.png" },
+    { word: "horn", file: "images/horn.png" },
+    { word: "horse", file: "images/horse.png" },
+    { word: "hose", file: "images/hose.png" },
+    { word: "house", file: "images/house.png" },
+    { word: "igloo", file: "images/igloo.png" },
+    { word: "ink", file: "images/ink.png" },
+    { word: "insects", file: "images/insects.png" },
+    { word: "jack in the box", file: "images/jack in the box.png" },
+    { word: "jacket", file: "images/jacket.png" },
+    { word: "jacks", file: "images/jacks.png" },
+    { word: "jar", file: "images/jar.png" },
+    { word: "jeep", file: "images/jeep.png" },
+    { word: "jewellery", file: "images/jewellery.png" },
+    { word: "jug", file: "images/jug.png" },
+    { word: "jump rope", file: "images/jump rope.png" },
+    { word: "jump", file: "images/jump.png" },
+    { word: "kangaroo", file: "images/kangaroo.png" },
+    { word: "key2", file: "images/key2.png" },
+    { word: "kick", file: "images/kick.png" },
+    { word: "king", file: "images/king.png" },
+    { word: "kiss", file: "images/kiss.png" },
+    { word: "kitchen", file: "images/kitchen.png" },
+    { word: "kite", file: "images/kite.png" },
+    { word: "ladder1", file: "images/ladder1.png" },
+    { word: "lamp", file: "images/lamp.png" },
+    { word: "leaf", file: "images/leaf.png" },
+    { word: "leg", file: "images/leg.png" },
+    { word: "letter", file: "images/letter.png" },
+    { word: "lips", file: "images/lips.png" },
+    { word: "lizard", file: "images/lizard.png" },
+    { word: "lock", file: "images/lock.png" },
+    { word: "log", file: "images/log.png" },
+    { word: "magnet", file: "images/magnet.png" },
+    { word: "mailbox", file: "images/mailbox.png" },
+    { word: "mask", file: "images/mask.png" },
+    { word: "milk", file: "images/milk.png" },
+    { word: "mirror", file: "images/mirror.png" },
+    { word: "mitten", file: "images/mitten.png" },
+    { word: "monkey", file: "images/monkey.png" },
+    { word: "moon", file: "images/moon.png" },
+    { word: "mop", file: "images/mop.png" },
+    { word: "nail", file: "images/nail.png" },
+    { word: "neck", file: "images/neck.png" },
+    { word: "needle", file: "images/needle.png" },
+    { word: "net", file: "images/net.png" },
+    { word: "newspaper", file: "images/newspaper.png" },
+    { word: "nine", file: "images/nine.png" },
+    { word: "nose", file: "images/nose.png" },
+    { word: "numbers", file: "images/numbers.png" },
+    { word: "nurse", file: "images/nurse.png" },
+    { word: "nut", file: "images/nut.png" },
+    { word: "octopus", file: "images/octopus.png" },
+    { word: "ostrich", file: "images/ostrich.png" },
+    { word: "ox", file: "images/ox.png" },
+    { word: "paint", file: "images/paint.png" },
+    { word: "pan", file: "images/pan.png" },
+    { word: "pear", file: "images/pear.png" },
+    { word: "peas", file: "images/peas.png" },
+    { word: "pen", file: "images/pen.png" },
+    { word: "pencil", file: "images/pencil.png" },
+    { word: "piano", file: "images/piano.png" },
+    { word: "picture", file: "images/picture.png" },
+    { word: "pig", file: "images/pig.png" },
+    { word: "pillow", file: "images/pillow.png" },
+    { word: "pin", file: "images/pin.png" },
+    { word: "pocket", file: "images/pocket.png" },
+    { word: "pumpkin", file: "images/pumpkin.png" },
+    { word: "puppet", file: "images/puppet.png" },
+    { word: "puzzle", file: "images/puzzle.png" },
+    { word: "quack", file: "images/quack.png" },
+    { word: "quarter", file: "images/quarter.png" },
+    { word: "queen", file: "images/queen.png" },
+    { word: "question mark", file: "images/question mark.png" },
+    { word: "raccoon", file: "images/raccoon.png" },
+    { word: "radio", file: "images/radio.png" },
+    { word: "rain", file: "images/rain.png" },
+    { word: "rainbow", file: "images/rainbow.png" },
+    { word: "rake", file: "images/rake.png" },
+    { word: "rattle", file: "images/rattle.png" },
+    { word: "refrigerator", file: "images/refrigerator.png" },
+    { word: "ribbon", file: "images/ribbon.png" },
+    { word: "ring", file: "images/ring.png" },
+    { word: "roof", file: "images/roof.png" },
+    { word: "rooster", file: "images/rooster.png" },
+    { word: "rope2", file: "images/rope2.png" },
+    { word: "rose", file: "images/rose.png" },
+    { word: "ruler", file: "images/ruler.png" },
+    { word: "sack", file: "images/sack.png" },
+    { word: "saddle", file: "images/saddle.png" },
+    { word: "sandbox", file: "images/sandbox.png" },
+    { word: "sandwich", file: "images/sandwich.png" },
+    { word: "saw", file: "images/saw.png" },
+    { word: "scissors", file: "images/scissors.png" },
+    { word: "seal", file: "images/seal.png" },
+    { word: "seven", file: "images/seven.png" },
+    { word: "shell", file: "images/shell.png" },
+    { word: "sink", file: "images/sink.png" },
+    { word: "six", file: "images/six.png" },
+    { word: "soap", file: "images/soap.png" },
+    { word: "sock", file: "images/sock.png" },
+    { word: "sun", file: "images/sun.png" },
+    { word: "table1", file: "images/table1.png" },
+    { word: "tape", file: "images/tape.png" },
+    { word: "teeth", file: "images/teeth.png" },
+    { word: "ten", file: "images/ten.png" },
+    { word: "thumb", file: "images/thumb.png" },
+    { word: "tiger", file: "images/tiger.png" },
+    { word: "toaster", file: "images/toaster.png" },
+    { word: "tomato", file: "images/tomato.png" },
+    { word: "toothbrush", file: "images/toothbrush.png" },
+    { word: "top", file: "images/top.png" },
+    { word: "towel", file: "images/towel.png" },
+    { word: "trunk", file: "images/trunk.png" },
+    { word: "turkey", file: "images/turkey.png" },
+    { word: "turtle", file: "images/turtle.png" },
+    { word: "umbrella", file: "images/umbrella.png" },
+    { word: "umpire", file: "images/umpire.png" },
+    { word: "upstairs", file: "images/upstairs.png" },
+    { word: "van", file: "images/van.png" },
+    { word: "vest", file: "images/vest.png" },
+    { word: "vine", file: "images/vine.png" },
+    { word: "violin", file: "images/violin.png" },
+    { word: "wagon", file: "images/wagon.png" },
+    { word: "watch", file: "images/watch.png" },
+    { word: "watermelon", file: "images/watermelon.png" },
+    { word: "web", file: "images/web.png" },
+    { word: "well", file: "images/well.png" },
+    { word: "wig", file: "images/wig.png" },
+    { word: "window", file: "images/window.png" },
+    { word: "wing", file: "images/wing.png" },
+    { word: "wink", file: "images/wink.png" },
+    { word: "worm", file: "images/worm.png" },
+    { word: "yard", file: "images/yard.png" },
+    { word: "yarn", file: "images/yarn.png" },
+    { word: "yawn", file: "images/yawn.png" },
+    { word: "yoyo", file: "images/yoyo.png" },
+    { word: "zebra", file: "images/zebra.png" },
+    { word: "zero", file: "images/zero.png" },
+    { word: "zipper", file: "images/zipper.png" },
+    { word: "zoo", file: "images/zoo.png" },
+  ];
+
+  /* ===== 工具函数 ===== */
+  function shuffleInPlace(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function randomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+
+  function pickDistinctWords(excludeWord, count) {
+    const pool = VOCAB.map((e) => e.word).filter((w) => w !== excludeWord);
+    shuffleInPlace(pool);
+    return pool.slice(0, count);
+  }
+
+  /* ===== 视图切换 ===== */
+  const views = {
+    home:  document.getElementById("view-home"),
+    flash: document.getElementById("view-flash"),
+    quiz:  document.getElementById("view-quiz"),
+    spell: document.getElementById("view-spell"),
+    first: document.getElementById("view-first"),
+  };
+
+  function showView(name) {
+    Object.keys(views).forEach((k) =>
+      views[k].classList.toggle("hidden", k !== name)
+    );
+  }
+
+  document.querySelectorAll("[data-back]").forEach((btn) => {
+    btn.addEventListener("click", () => showView("home"));
+  });
+
+  /* ===== 首页 ===== */
+  const homeEmpty = document.getElementById("home-empty");
+  homeEmpty.classList.toggle("hidden", VOCAB.length > 0);
+
+  function guardVocab(fn) {
+    if (!VOCAB.length) return;
+    fn();
+  }
+
+  document.getElementById("go-flash").addEventListener("click", () => guardVocab(startFlash));
+  document.getElementById("go-quiz").addEventListener("click",  () => guardVocab(startQuiz));
+  document.getElementById("go-spell").addEventListener("click", () => guardVocab(startSpell));
+  document.getElementById("go-first").addEventListener("click", () => guardVocab(startFirst));
+
+  /* ===== 卡片模式 ===== */
+  let flashOrder = [];
+  let flashPos = 0;
+  let flashReveal = false;
+
+  const flashImg   = document.getElementById("flash-img");
+  const flashWord  = document.getElementById("flash-word");
+  const flashStats = document.getElementById("flash-stats");
+
+  function renderFlash() {
+    const e = VOCAB[flashOrder[flashPos]];
+    flashImg.src = e.file;
+    flashImg.alt = e.word;
+    flashWord.textContent = e.word;
+    flashWord.classList.toggle("blurred", !flashReveal);
+    flashStats.textContent = `第 ${flashPos + 1} / ${flashOrder.length} 张`;
+  }
+
+  function startFlash() {
+    flashOrder = VOCAB.map((_, i) => i);
+    flashPos = 0;
+    flashReveal = false;
+    showView("flash");
+    renderFlash();
+  }
+
+  document.getElementById("flash-shuffle").addEventListener("click", () => {
+    shuffleInPlace(flashOrder);
+    flashPos = 0;
+    flashReveal = false;
+    renderFlash();
+  });
+
+  document.getElementById("flash-prev").addEventListener("click", () => {
+    flashPos = (flashPos - 1 + flashOrder.length) % flashOrder.length;
+    flashReveal = false;
+    renderFlash();
+  });
+
+  document.getElementById("flash-next").addEventListener("click", () => {
+    flashPos = (flashPos + 1) % flashOrder.length;
+    flashReveal = false;
+    renderFlash();
+  });
+
+  function toggleFlashReveal() {
+    flashReveal = !flashReveal;
+    flashWord.classList.toggle("blurred", !flashReveal);
+  }
+
+  flashWord.addEventListener("click", toggleFlashReveal);
+  flashImg.addEventListener("click",  toggleFlashReveal);
+
+  document.addEventListener("keydown", (ev) => {
+    if (views.flash.classList.contains("hidden")) return;
+    if (ev.key === "ArrowLeft")  { ev.preventDefault(); document.getElementById("flash-prev").click(); }
+    if (ev.key === "ArrowRight") { ev.preventDefault(); document.getElementById("flash-next").click(); }
+  });
+
+  /* ===== 测验模式 ===== */
+  let quizCorrect  = 0;
+  let quizTotal    = 0;
+  let quizCurrent  = null;
+  let quizAnswered = false;
+
+  const quizImg     = document.getElementById("quiz-img");
+  const quizOptions = document.getElementById("quiz-options");
+  const quizMsg     = document.getElementById("quiz-msg");
+  const quizNext    = document.getElementById("quiz-next");
+  const quizStatsEl = document.getElementById("quiz-stats");
+
+  function updateQuizStats() {
+    quizStatsEl.textContent = quizTotal
+      ? `本轮 ${quizCorrect} / ${quizTotal} 正确`
+      : "本轮尚未答题";
+  }
+
+  function buildQuizQuestion() {
+    quizAnswered = false;
+    quizMsg.classList.add("hidden");
+    quizNext.classList.add("hidden");
+    quizOptions.innerHTML = "";
+
+    const idx = randomInt(VOCAB.length);
+    quizCurrent = VOCAB[idx];
+    quizImg.src = quizCurrent.file;
+    quizImg.alt = quizCurrent.word;
+
+    const need = Math.min(3, VOCAB.length - 1);
+    const wrong = pickDistinctWords(quizCurrent.word, need);
+    const choices = shuffleInPlace([quizCurrent.word, ...wrong]);
+
+    choices.forEach((w) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "option";
+      b.textContent = w;
+      b.addEventListener("click", () => onQuizPick(w, b));
+      quizOptions.appendChild(b);
+    });
+  }
+
+  function onQuizPick(word, btn) {
+    if (quizAnswered) return;
+    quizAnswered = true;
+    quizTotal += 1;
+    const ok = word === quizCurrent.word;
+    if (ok) quizCorrect += 1;
+    updateQuizStats();
+
+    quizOptions.querySelectorAll("button.option").forEach((el) => {
+      el.disabled = true;
+      if (el.textContent === quizCurrent.word) el.classList.add("correct");
+    });
+    if (!ok) {
+      btn.classList.add("wrong");
+      quizMsg.textContent = `再想想。正确答案是：${quizCurrent.word}`;
+      quizMsg.className = "msg bad";
+    } else {
+      quizMsg.textContent = "回答正确！";
+      quizMsg.className = "msg ok";
+    }
+    quizMsg.classList.remove("hidden");
+    quizNext.classList.remove("hidden");
+  }
+
+  function startQuiz() {
+    quizCorrect = 0;
+    quizTotal   = 0;
+    updateQuizStats();
+    showView("quiz");
+    buildQuizQuestion();
+  }
+
+  document.getElementById("quiz-next").addEventListener("click", buildQuizQuestion);
+
+  /* ===== 拼写模式 ===== */
+  let spellQueue   = [];
+  let spellIndex   = 0;
+  let spellCurrent = null;
+  let spellCorrect = 0;
+  let spellAttempts = 0;
+
+  const spellImg         = document.getElementById("spell-img");
+  const spellInput       = document.getElementById("spell-input");
+  const spellMsg         = document.getElementById("spell-msg");
+  const spellStats       = document.getElementById("spell-stats");
+  const spellHintToggle  = document.getElementById("spell-hint-toggle");
+  const spellHint        = document.getElementById("spell-hint");
+
+  function updateSpellStats() {
+    spellStats.textContent = spellAttempts
+      ? `本轮 ${spellCorrect} / ${spellAttempts} 正确`
+      : "本轮尚未提交";
+  }
+
+  function updateSpellHint() {
+    if (spellHintToggle.checked && spellCurrent) {
+      spellHint.textContent = `提示：首字母为 "${spellCurrent.word.charAt(0)}"`;
+      spellHint.classList.remove("hidden");
+    } else {
+      spellHint.classList.add("hidden");
+    }
+  }
+
+  function nextSpellWord() {
+    spellMsg.classList.add("hidden");
+    spellInput.value = "";
+    if (!spellQueue.length || spellIndex >= spellQueue.length) {
+      spellQueue = shuffleInPlace(VOCAB.map((_, i) => i));
+      spellIndex = 0;
+    }
+    spellCurrent = VOCAB[spellQueue[spellIndex++]];
+    spellImg.src = spellCurrent.file;
+    spellImg.alt = spellCurrent.word;
+    updateSpellHint();
+    spellInput.focus();
+  }
+
+  function checkSpell() {
+    if (!spellCurrent) return;
+    const guess  = spellInput.value.trim().toLowerCase();
+    const target = spellCurrent.word.trim().toLowerCase();
+    spellAttempts += 1;
+    if (guess === target) {
+      spellCorrect += 1;
+      spellMsg.textContent = "正确！";
+      spellMsg.className = "msg ok";
+      spellMsg.classList.remove("hidden");
+      updateSpellStats();
+      nextSpellWord();
+      return;
+    }
+    spellMsg.textContent = "不对，再试一次。";
+    spellMsg.className = "msg bad";
+    spellMsg.classList.remove("hidden");
+    updateSpellStats();
+  }
+
+  function startSpell() {
+    spellQueue    = [];
+    spellIndex    = 0;
+    spellCorrect  = 0;
+    spellAttempts = 0;
+    updateSpellStats();
+    showView("spell");
+    nextSpellWord();
+  }
+
+  spellHintToggle.addEventListener("change", updateSpellHint);
+  document.getElementById("spell-submit").addEventListener("click", checkSpell);
+  document.getElementById("spell-skip").addEventListener("click", nextSpellWord);
+  spellInput.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") { ev.preventDefault(); checkSpell(); }
+  });
+
+  /* ===== 首字母模式 ===== */
+  let firstQueue    = [];
+  let firstIndex    = 0;
+  let firstCurrent  = null;
+  let firstCorrect  = 0;
+  let firstAttempts = 0;
+
+  const firstImg   = document.getElementById("first-img");
+  const firstInput = document.getElementById("first-input");
+  const firstMsg   = document.getElementById("first-msg");
+  const firstStats = document.getElementById("first-stats");
+
+  function updateFirstStats() {
+    firstStats.textContent = firstAttempts
+      ? `本轮 ${firstCorrect} / ${firstAttempts} 正确`
+      : "本轮尚未提交";
+  }
+
+  function nextFirstWord() {
+    firstMsg.classList.add("hidden");
+    firstInput.value = "";
+    if (!firstQueue.length || firstIndex >= firstQueue.length) {
+      firstQueue = shuffleInPlace(VOCAB.map((_, i) => i));
+      firstIndex = 0;
+    }
+    firstCurrent = VOCAB[firstQueue[firstIndex++]];
+    firstImg.src = firstCurrent.file;
+    firstImg.alt = firstCurrent.word;
+    firstInput.focus();
+  }
+
+  function checkFirst() {
+    if (!firstCurrent) return;
+    const raw = firstInput.value.trim();
+    if (!raw) {
+      firstMsg.textContent = "请输入至少一个字符。";
+      firstMsg.className = "msg bad";
+      firstMsg.classList.remove("hidden");
+      return;
+    }
+    const g      = raw.charAt(0).toLowerCase();
+    const target = firstCurrent.word.charAt(0).toLowerCase();
+    firstAttempts += 1;
+    if (g === target) {
+      firstCorrect += 1;
+      firstMsg.textContent = "正确！";
+      firstMsg.className = "msg ok";
+      firstMsg.classList.remove("hidden");
+      updateFirstStats();
+      nextFirstWord();
+      return;
+    }
+    firstMsg.textContent = "不对，再试一次。";
+    firstMsg.className = "msg bad";
+    firstMsg.classList.remove("hidden");
+    updateFirstStats();
+  }
+
+  function startFirst() {
+    firstQueue    = [];
+    firstIndex    = 0;
+    firstCorrect  = 0;
+    firstAttempts = 0;
+    updateFirstStats();
+    showView("first");
+    nextFirstWord();
+  }
+
+  document.getElementById("first-submit").addEventListener("click", checkFirst);
+  document.getElementById("first-skip").addEventListener("click", nextFirstWord);
+  firstInput.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") { ev.preventDefault(); checkFirst(); }
+  });
+</script>
+</body>
+</html>
