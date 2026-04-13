@@ -612,7 +612,7 @@
     { word: "jump rope", file: "images/jump rope.png", zh: "跳绳，绳子" },
     { word: "jump", file: "images/jump.png", zh: "跳，跳跃" },
     { word: "kangaroo", file: "images/kangaroo.png", zh: "袋鼠" },
-    { word: "key2", file: "images/key2.png", zh: "钥匙" },
+    { word: "key", file: "images/key.png", zh: "钥匙" },
     { word: "kick", file: "images/kick.png", zh: "踢" },
     { word: "king", file: "images/king.png", zh: "国王" },
     { word: "kiss", file: "images/kiss.png", zh: "吻，亲吻" },
@@ -790,12 +790,6 @@
     shuffleInPlace(wb);
     shuffleInPlace(other);
     return wb.length ? [...wb, ...other] : shuffleInPlace(VOCAB.map((_, i) => i));
-  }
-
-  function pickWeightedVocabIndex() {
-    const wb = getWordbookVocabIndices();
-    if (wb.length > 0) return wb[randomInt(wb.length)];
-    return randomInt(VOCAB.length);
   }
 
   /* ===== 工具函数 ===== */
@@ -1119,7 +1113,7 @@
     quizNext.classList.add("hidden");
     quizOptions.innerHTML = "";
 
-    const idx = pickWeightedVocabIndex();
+    const idx = randomInt(VOCAB.length);
     quizCurrent = VOCAB[idx];
     setImageWithFade(quizImg, quizCurrent.file, quizCurrent.word);
 
