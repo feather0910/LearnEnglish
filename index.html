@@ -300,6 +300,11 @@
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.22);
     }
+    /* 拼写 / 首字母：输入框字号为默认的 2 倍（默认 input 为 1.02rem） */
+    #spell-input,
+    #first-input {
+      font-size: calc(1.02rem * 2);
+    }
     .options {
       display: grid;
       gap: 0.55rem;
@@ -484,12 +489,49 @@
       padding: 0.55rem 0.85rem;
       font-size: 1.02rem;
     }
+    /* 看图选词：选项字号为其他文字选项的 2 倍，并略增高行框便于长词换行 */
+    #view-quiz-word .options button.option {
+      font-size: calc(1.02rem * 2);
+      min-height: calc(48px * 1.5);
+      padding: 0.65rem 0.95rem;
+    }
     .streak-line {
       font-size: 0.9rem;
       font-weight: 800;
       color: #c2410c;
       margin-top: 0.25rem;
-      min-height: 1.35rem;
+      min-height: 2.4rem;
+      line-height: 1.35;
+    }
+    .round-dots {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.28rem;
+      margin: 0.35rem 0 0.5rem;
+      max-width: 100%;
+    }
+    .round-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid #fed7aa;
+      background: #fff7ed;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+    .round-dot.done {
+      background: linear-gradient(135deg, #fdba74, #fb923c);
+      border-color: #ea580c;
+    }
+    .round-dot.current {
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      border-color: #c2410c;
+      transform: scale(1.25);
+      box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.25);
+    }
+    .round-dot.upcoming {
+      opacity: 0.45;
     }
     .confetti-root {
       position: fixed;
@@ -513,6 +555,55 @@
         opacity: 0.35;
       }
     }
+    .praise-toast {
+      position: fixed;
+      left: 50%;
+      right: auto;
+      top: auto;
+      /* 贴在视口偏下，留出底部按钮区与拇指区，避免挡住题干、选项和「下一题」等 */
+      bottom: max(6.75rem, calc(env(safe-area-inset-bottom, 0px) + 5.5rem));
+      transform: translateX(-50%);
+      z-index: 65;
+      max-width: min(92vw, 420px);
+      padding: 1.1rem 1.75rem;
+      font-size: clamp(1.65rem, 6.5vw, 2.6rem);
+      font-weight: 800;
+      line-height: 1.25;
+      text-align: center;
+      letter-spacing: 0.02em;
+      color: #14532d;
+      background: linear-gradient(160deg, #ecfdf5 0%, #ffffff 45%, #d1fae5 100%);
+      border: 4px solid #22c55e;
+      border-radius: 24px;
+      box-shadow:
+        0 12px 40px rgba(34, 197, 94, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      text-wrap: balance;
+    }
+    .praise-toast.is-visible {
+      visibility: visible;
+      animation: praise-bounce-in 0.72s cubic-bezier(0.22, 1.45, 0.36, 1) forwards;
+    }
+    @keyframes praise-bounce-in {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(28px) scale(0.35) rotate(-4deg);
+      }
+      55% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-4px) scale(1.08) rotate(1deg);
+      }
+      78% {
+        transform: translateX(-50%) translateY(2px) scale(0.97) rotate(0deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1) rotate(0deg);
+      }
+    }
     .round-overlay {
       position: fixed;
       inset: 0;
@@ -532,6 +623,21 @@
       text-align: center;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
       border: 2px solid #fed7aa;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .round-overlay-inner.is-great {
+      border-color: #22c55e;
+      background: linear-gradient(165deg, #f0fdf4 0%, #fff 55%, #ecfdf5 100%);
+      box-shadow: 0 20px 50px rgba(34, 197, 94, 0.22);
+    }
+    .round-overlay-inner.is-ok {
+      border-color: #38bdf8;
+      background: linear-gradient(165deg, #f0f9ff 0%, #fff 60%, #e0f2fe 100%);
+      box-shadow: 0 20px 50px rgba(56, 189, 248, 0.18);
+    }
+    .round-overlay-inner.is-retry {
+      border-color: #fdba74;
+      background: linear-gradient(165deg, #fffbeb 0%, #fff 55%, #ffedd5 100%);
     }
     .round-overlay-inner h3 {
       margin: 0 0 0.5rem;
@@ -557,42 +663,46 @@
   <!-- 首页 -->
   <section id="view-home" class="panel">
     <div class="home-hero">
-      <div class="hero-emoji">🌈📚🧠</div>
+      <div class="hero-emoji">✨📖🎉</div>
       <h1>单词图片学习</h1>
-      <p class="lead">图片放在与本页同级的 <code>images</code> 文件夹，在脚本里编辑 <code>VOCAB</code> 词表，双击本页即可使用。</p>
+      <p class="lead">和爸爸妈妈一起：看图、选词、拼一拼，每天玩一小会儿就超棒。</p>
     </div>
     <p id="home-empty" class="empty hidden">词表为空：请先在 <code>VOCAB</code> 中添加条目。</p>
     <div class="modes">
       <button type="button" id="go-flash" class="mode-card">
-        <span class="mode-icon">🃏</span>
+        <span class="mode-icon">🃏✨</span>
         <span class="mode-title">卡片模式</span>
-        <span class="mode-desc">看图记词，点击翻面</span>
+        <span class="mode-desc">翻翻小卡片，看图记单词</span>
       </button>
       <button type="button" id="go-quiz-word" class="mode-card">
-        <span class="mode-icon">🎯</span>
+        <span class="mode-icon">🔍🖼️</span>
         <span class="mode-title">看图选词</span>
         <span class="mode-desc">每轮 20 题，先练没测过的词</span>
       </button>
       <button type="button" id="go-quiz-image" class="mode-card">
-        <span class="mode-icon">🖼️</span>
+        <span class="mode-icon">🔤🎨</span>
         <span class="mode-title">看词选图</span>
-        <span class="mode-desc">认单词，点对应图片</span>
+        <span class="mode-desc">单词出现，点对的图片</span>
       </button>
       <button type="button" id="go-spell" class="mode-card">
-        <span class="mode-icon">✍️</span>
+        <span class="mode-icon">✍️⭐</span>
         <span class="mode-title">拼写模式</span>
-        <span class="mode-desc">每轮 20 词，输入完整单词</span>
+        <span class="mode-desc">每轮 20 词，动手拼出来</span>
       </button>
       <button type="button" id="go-first" class="mode-card">
-        <span class="mode-icon">🔤</span>
+        <span class="mode-icon">🔤🚀</span>
         <span class="mode-title">首字母模式</span>
-        <span class="mode-desc">每轮 20 词，输入首字母</span>
+        <span class="mode-desc">每轮 20 词，第一个字母你会吗</span>
       </button>
     </div>
     <div class="home-settings">
       <label class="inline">
         <input type="checkbox" id="setting-auto-next" />
         答对自动下一题
+      </label>
+      <label class="inline">
+        <input type="checkbox" id="setting-sound-on" />
+        胜利短音效（很轻）
       </label>
       <button type="button" class="secondary" id="reset-seen-words">清空已测记录</button>
     </div>
@@ -629,6 +739,7 @@
       <span class="stats" id="quiz-word-stats"></span>
     </div>
     <p class="streak-line" id="quiz-word-streak" aria-live="polite"></p>
+    <div class="round-dots" id="quiz-word-dots" aria-hidden="true"></div>
     <div class="figure figure--quiz-word" id="quiz-word-figure"><img id="quiz-word-img" class="fade-img" alt="" /></div>
     <div class="options options--quiz-words" id="quiz-word-options"></div>
     <p id="quiz-word-msg" class="msg hidden" role="status"></p>
@@ -645,6 +756,7 @@
       <span class="stats" id="quiz-image-stats"></span>
     </div>
     <p class="streak-line" id="quiz-image-streak" aria-live="polite"></p>
+    <div class="round-dots" id="quiz-image-dots" aria-hidden="true"></div>
     <p class="round-prompt-word" id="quiz-image-prompt"></p>
     <div class="options-grid-images" id="quiz-image-options"></div>
     <p id="quiz-image-msg" class="msg hidden" role="status"></p>
@@ -661,6 +773,7 @@
       <span class="stats" id="spell-stats"></span>
     </div>
     <p class="streak-line" id="spell-streak" aria-live="polite"></p>
+    <div class="round-dots" id="spell-dots" aria-hidden="true"></div>
     <div class="figure figure--short"><img id="spell-img" class="fade-img" alt="" /></div>
     <label class="inline" style="margin-top:0.75rem">
       <input type="checkbox" id="spell-hint-toggle" checked />
@@ -687,6 +800,7 @@
       <span class="stats" id="first-stats"></span>
     </div>
     <p class="streak-line" id="first-streak" aria-live="polite"></p>
+    <div class="round-dots" id="first-dots" aria-hidden="true"></div>
     <div class="figure figure--short"><img id="first-img" class="fade-img" alt="" /></div>
     <input type="text" id="first-input" autocomplete="off" spellcheck="false" maxlength="8"
            placeholder="输入该词的首字母后按 Enter" />
@@ -715,6 +829,7 @@
 </div><!-- /.app -->
 
 <div id="confetti-root" class="confetti-root" aria-hidden="true"></div>
+<div id="praise-toast" class="praise-toast" role="status" aria-live="assertive" aria-atomic="true"></div>
 
 <div id="round-overlay" class="round-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="round-overlay-title">
   <div class="round-overlay-inner">
@@ -820,7 +935,7 @@
     { word: "kiss", file: "images/kiss.jpg", zh: "吻，亲吻" },
     { word: "kitchen", file: "images/kitchen.jpg", zh: "厨房" },
     { word: "kite", file: "images/kite.jpg", zh: "风筝" },
-    { word: "ladder1", file: "images/ladder1.jpg", zh: "梯子" },
+    { word: "ladder", file: "images/ladder.jpg", zh: "梯子" },
     { word: "lamp", file: "images/lamp.jpg", zh: "灯，台灯" },
     { word: "leaf", file: "images/leaf.jpg", zh: "叶子" },
     { word: "leg", file: "images/leg.jpg", zh: "腿" },
@@ -881,7 +996,7 @@
     { word: "ring", file: "images/ring.jpg", zh: "戒指，环" },
     { word: "roof", file: "images/roof.jpg", zh: "屋顶" },
     { word: "rooster", file: "images/rooster.jpg", zh: "公鸡" },
-    { word: "rope2", file: "images/rope2.jpg", zh: "绳子，绳索" },
+    { word: "rope", file: "images/rope.jpg", zh: "绳子，绳索" },
     { word: "rose", file: "images/rose.jpg", zh: "玫瑰" },
     { word: "ruler", file: "images/ruler.jpg", zh: "尺子，直尺" },
     { word: "sack", file: "images/sack.jpg", zh: "麻袋，大口袋" },
@@ -898,7 +1013,7 @@
     { word: "soap", file: "images/soap.jpg", zh: "肥皂" },
     { word: "sock", file: "images/sock.jpg", zh: "袜子" },
     { word: "sun", file: "images/sun.jpg", zh: "太阳" },
-    { word: "table1", file: "images/table1.jpg", zh: "桌子" },
+    { word: "table", file: "images/table.jpg", zh: "桌子" },
     { word: "tape", file: "images/tape.jpg", zh: "胶带，磁带" },
     { word: "teeth", file: "images/teeth.jpg", zh: "牙齿" },
     { word: "ten", file: "images/ten.jpg", zh: "十，十个" },
@@ -946,20 +1061,23 @@
   const ROUND_SIZE = 20;
 
   function loadSettings() {
+    const defaults = { autoNext: true, soundOn: false };
     try {
       const raw = localStorage.getItem(SETTINGS_KEY);
-      if (!raw) return { autoNext: true };
+      if (!raw) return { ...defaults };
       const o = JSON.parse(raw);
       return {
-        autoNext: o && typeof o.autoNext === "boolean" ? o.autoNext : true,
+        autoNext: o && typeof o.autoNext === "boolean" ? o.autoNext : defaults.autoNext,
+        soundOn: o && typeof o.soundOn === "boolean" ? o.soundOn : defaults.soundOn,
       };
     } catch {
-      return { autoNext: true };
+      return { ...defaults };
     }
   }
 
-  function saveSettings(s) {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  function saveSettings(partial) {
+    const next = { ...loadSettings(), ...partial };
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
   }
 
   function loadSeenWords() {
@@ -1016,20 +1134,82 @@
   }
 
   const confettiRoot = document.getElementById("confetti-root");
-  function spawnConfetti() {
+  function spawnConfetti(scale = 1) {
     if (!confettiRoot) return;
     const colors = ["#f97316", "#fb923c", "#22c55e", "#38bdf8", "#a855f7", "#f472b6", "#facc15"];
-    const n = 26;
+    const n = Math.max(10, Math.round(26 * scale));
+    const durMul = scale >= 1.6 ? 1.12 : 1;
     for (let i = 0; i < n; i += 1) {
       const el = document.createElement("span");
       el.className = "confetti-piece";
       el.style.left = `${6 + Math.random() * 88}%`;
       el.style.background = colors[randomInt(colors.length)];
-      el.style.setProperty("--dx", `${(Math.random() - 0.5) * 140}px`);
-      el.style.animationDuration = `${0.85 + Math.random() * 0.35}s`;
+      el.style.setProperty("--dx", `${(Math.random() - 0.5) * (140 + 40 * scale)}px`);
+      el.style.animationDuration = `${(0.85 + Math.random() * 0.35) * durMul}s`;
       confettiRoot.appendChild(el);
-      setTimeout(() => el.remove(), 1300);
+      setTimeout(() => el.remove(), 1300 + Math.round(200 * scale));
     }
+  }
+
+  const PRAISE_PHRASES = [
+    "太棒了！", "又对了！", "小天才！", "好厉害！", "完全正确！", "真聪明！", "棒棒哒！", "答对啦！",
+  ];
+  const STREAK_BONUS = { 3: "三连击！", 5: "五连闪！", 10: "十全十美！" };
+
+  function randomPraise() {
+    const len = PRAISE_PHRASES.length;
+    if (!len) return "答对了！";
+    const i = Math.floor(Math.random() * len);
+    return PRAISE_PHRASES[i] || "答对了！";
+  }
+
+  let praiseToastHideTimer = null;
+  function showPraiseToast(line) {
+    const el = document.getElementById("praise-toast");
+    if (!el) return;
+    const text = (line && String(line).trim()) || "答对了！";
+    if (praiseToastHideTimer) clearTimeout(praiseToastHideTimer);
+    el.classList.remove("is-visible");
+    el.textContent = text;
+    void el.offsetWidth;
+    el.classList.add("is-visible");
+    praiseToastHideTimer = setTimeout(() => {
+      el.classList.remove("is-visible");
+      el.textContent = "";
+      praiseToastHideTimer = null;
+    }, 2200);
+  }
+
+  function praiseForToast() {
+    return randomPraise();
+  }
+
+  let winAudioCtx = null;
+  function playWinBeep() {
+    if (!loadSettings().soundOn) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!winAudioCtx) winAudioCtx = new AC();
+      const ctx = winAudioCtx;
+      if (ctx.state === "suspended") ctx.resume();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(880, ctx.currentTime);
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.07, ctx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.11);
+      o.connect(g);
+      g.connect(ctx.destination);
+      o.start(ctx.currentTime);
+      o.stop(ctx.currentTime + 0.12);
+    } catch (_) { /* 部分环境禁用音频 */ }
+  }
+
+  function onAnswerCorrectFx() {
+    spawnConfetti(1);
+    playWinBeep();
   }
 
   let streakCount = 0;
@@ -1044,7 +1224,11 @@
     } else {
       streakCount = 0;
     }
-    el.textContent = streakText();
+    let t = streakText();
+    if (ok && STREAK_BONUS[streakCount]) {
+      t = t ? `${t} ${STREAK_BONUS[streakCount]}` : STREAK_BONUS[streakCount];
+    }
+    el.textContent = t;
   }
   function resetStreakLine(els) {
     streakCount = 0;
@@ -1053,19 +1237,62 @@
 
   const roundOverlay = document.getElementById("round-overlay");
   const roundOverlayBody = document.getElementById("round-overlay-body");
+  const roundOverlayInner = document.querySelector(".round-overlay-inner");
+  const roundOverlayTitleEl = document.getElementById("round-overlay-title");
   let roundOverlayMode = null;
+
+  function renderRoundDots(container, pos, total) {
+    if (!container) return;
+    if (!total) {
+      container.innerHTML = "";
+      return;
+    }
+    container.innerHTML = "";
+    const cap = Math.min(total, 40);
+    for (let i = 0; i < cap; i += 1) {
+      const dot = document.createElement("span");
+      dot.className = "round-dot";
+      if (i < pos) dot.classList.add("done");
+      else if (i === pos) dot.classList.add("current");
+      else dot.classList.add("upcoming");
+      dot.title = `第 ${i + 1} 题`;
+      container.appendChild(dot);
+    }
+  }
 
   function showRoundComplete(mode, correct, total) {
     roundOverlayMode = mode;
+    let title = "本轮完成";
+    let tier = "is-retry";
+    let confScale = 1.35;
+    if (total > 0) {
+      const r = correct / total;
+      if (correct === total) {
+        title = "太棒了！";
+        tier = "is-great";
+        confScale = 2.1;
+      } else if (r >= 0.7) {
+        title = "很不错！";
+        tier = "is-ok";
+        confScale = 1.75;
+      }
+    }
+    if (roundOverlayInner) {
+      roundOverlayInner.classList.remove("is-great", "is-ok", "is-retry");
+      roundOverlayInner.classList.add(tier);
+    }
+    if (roundOverlayTitleEl) roundOverlayTitleEl.textContent = title;
     if (roundOverlayBody) {
       roundOverlayBody.textContent = `答对 ${correct} / ${total} 题。`;
     }
+    spawnConfetti(confScale);
     if (roundOverlay) roundOverlay.classList.remove("hidden");
   }
 
   function hideRoundComplete() {
     if (roundOverlay) roundOverlay.classList.add("hidden");
     roundOverlayMode = null;
+    if (roundOverlayInner) roundOverlayInner.classList.remove("is-great", "is-ok", "is-retry");
   }
 
   const roundOverlayHomeBtn = document.getElementById("round-overlay-home");
@@ -1088,11 +1315,18 @@
   }
 
   const settingAutoNext = document.getElementById("setting-auto-next");
+  const settingSoundOn = document.getElementById("setting-sound-on");
   const s0 = loadSettings();
   if (settingAutoNext) {
     settingAutoNext.checked = s0.autoNext;
     settingAutoNext.addEventListener("change", () => {
       saveSettings({ autoNext: settingAutoNext.checked });
+    });
+  }
+  if (settingSoundOn) {
+    settingSoundOn.checked = s0.soundOn;
+    settingSoundOn.addEventListener("change", () => {
+      saveSettings({ soundOn: settingSoundOn.checked });
     });
   }
 
@@ -1480,14 +1714,17 @@
   const quizWordNext = document.getElementById("quiz-word-next");
   const quizWordStatsEl = document.getElementById("quiz-word-stats");
   const quizWordStreakEl = document.getElementById("quiz-word-streak");
+  const quizWordDotsEl = document.getElementById("quiz-word-dots");
 
   function updateQuizWordStats() {
     const n = quizWordQueue.length;
     if (!n) {
       quizWordStatsEl.textContent = "";
+      renderRoundDots(quizWordDotsEl, 0, 0);
       return;
     }
     quizWordStatsEl.textContent = `第 ${quizWordPos + 1} / ${n} 题 · 本轮答对 ${quizWordRoundCorrect} 题`;
+    renderRoundDots(quizWordDotsEl, quizWordPos, n);
   }
 
   function buildQuizWordQuestion() {
@@ -1531,26 +1768,29 @@
 
   function onQuizWordPick(word, btn) {
     if (quizWordAnswered || !quizWordCurrent) return;
-    quizWordAnswered = true;
     const ok = word === quizWordCurrent.word;
+    if (!ok) {
+      updateStreakLine(quizWordStreakEl, false);
+      btn.disabled = true;
+      btn.classList.add("wrong");
+      quizWordMsg.textContent = "再想想，点别的选项再试一次！";
+      quizWordMsg.className = "msg bad";
+      quizWordMsg.classList.remove("hidden");
+      return;
+    }
+
+    quizWordAnswered = true;
     markWordSeen(quizWordCurrent.word);
-    if (ok) quizWordRoundCorrect += 1;
-    updateStreakLine(quizWordStreakEl, ok);
-    if (ok) spawnConfetti();
+    quizWordRoundCorrect += 1;
+    updateStreakLine(quizWordStreakEl, true);
+    onAnswerCorrectFx();
 
     quizWordOptions.querySelectorAll("button.option").forEach((el) => {
       el.disabled = true;
       if (el.dataset.word === quizWordCurrent.word) el.classList.add("correct");
     });
-    if (!ok) {
-      btn.classList.add("wrong");
-      quizWordMsg.textContent = `再想想。正确答案是：${quizWordCurrent.word}`;
-      quizWordMsg.className = "msg bad";
-    } else {
-      quizWordMsg.textContent = "回答正确！";
-      quizWordMsg.className = "msg ok";
-    }
-    quizWordMsg.classList.remove("hidden");
+    quizWordMsg.classList.add("hidden");
+    showPraiseToast(praiseForToast());
     updateQuizWordStats();
 
     if (isAutoNext()) {
@@ -1588,14 +1828,17 @@
   const quizImageNext = document.getElementById("quiz-image-next");
   const quizImageStatsEl = document.getElementById("quiz-image-stats");
   const quizImageStreakEl = document.getElementById("quiz-image-streak");
+  const quizImageDotsEl = document.getElementById("quiz-image-dots");
 
   function updateQuizImageStats() {
     const n = quizImageQueue.length;
     if (!n) {
       quizImageStatsEl.textContent = "";
+      renderRoundDots(quizImageDotsEl, 0, 0);
       return;
     }
     quizImageStatsEl.textContent = `第 ${quizImagePos + 1} / ${n} 题 · 本轮答对 ${quizImageRoundCorrect} 题`;
+    renderRoundDots(quizImageDotsEl, quizImagePos, n);
   }
 
   function buildQuizImageQuestion() {
@@ -1643,28 +1886,31 @@
   }
 
   function onQuizImagePick(pickedIdx, btn) {
-    if (quizImageAnswered) return;
-    quizImageAnswered = true;
+    if (quizImageAnswered || quizImageAnswerIdx < 0) return;
     const ok = pickedIdx === quizImageAnswerIdx;
     const curWord = VOCAB[quizImageAnswerIdx].word;
+    if (!ok) {
+      updateStreakLine(quizImageStreakEl, false);
+      btn.disabled = true;
+      btn.classList.add("wrong");
+      quizImageMsg.textContent = "再想想，换一张图点点看！";
+      quizImageMsg.className = "msg bad";
+      quizImageMsg.classList.remove("hidden");
+      return;
+    }
+
+    quizImageAnswered = true;
     markWordSeen(curWord);
-    if (ok) quizImageRoundCorrect += 1;
-    updateStreakLine(quizImageStreakEl, ok);
-    if (ok) spawnConfetti();
+    quizImageRoundCorrect += 1;
+    updateStreakLine(quizImageStreakEl, true);
+    onAnswerCorrectFx();
 
     quizImageOptions.querySelectorAll("button.option-image").forEach((el) => {
       el.disabled = true;
       if (Number(el.dataset.vocabIdx) === quizImageAnswerIdx) el.classList.add("correct");
     });
-    if (!ok) {
-      btn.classList.add("wrong");
-      quizImageMsg.textContent = "再想想，请看绿色框出的图片。";
-      quizImageMsg.className = "msg bad";
-    } else {
-      quizImageMsg.textContent = "回答正确！";
-      quizImageMsg.className = "msg ok";
-    }
-    quizImageMsg.classList.remove("hidden");
+    quizImageMsg.classList.add("hidden");
+    showPraiseToast(praiseForToast());
     updateQuizImageStats();
 
     if (isAutoNext()) {
@@ -1705,14 +1951,17 @@
   const spellAnswerLine = document.getElementById("spell-answer-line");
   const spellStreakEl = document.getElementById("spell-streak");
   const spellContinue = document.getElementById("spell-continue");
+  const spellDotsEl = document.getElementById("spell-dots");
 
   function updateSpellStats() {
     const n = spellQueue.length;
     if (!n) {
       spellStats.textContent = "";
+      renderRoundDots(spellDotsEl, 0, 0);
       return;
     }
     spellStats.textContent = `第 ${spellPos + 1} / ${n} 题 · 本轮答对 ${spellRoundCorrect} 题`;
+    renderRoundDots(spellDotsEl, spellPos, n);
   }
 
   function updateSpellHint() {
@@ -1758,16 +2007,15 @@
       markWordSeen(spellCurrent.word);
       spellRoundCorrect += 1;
       updateStreakLine(spellStreakEl, true);
-      spawnConfetti();
-      spellMsg.textContent = "正确！";
-      spellMsg.className = "msg ok";
-      spellMsg.classList.remove("hidden");
+      onAnswerCorrectFx();
+      spellMsg.classList.add("hidden");
+      showPraiseToast(praiseForToast());
       if (isAutoNext()) {
         setTimeout(() => advanceSpellQuestion(), 650);
       } else if (spellContinue) {
         spellContinue.classList.remove("hidden");
       } else {
-        advanceSpellQuestion();
+        setTimeout(() => advanceSpellQuestion(), 900);
       }
       return;
     }
@@ -1838,14 +2086,17 @@
   const firstAnswerLine = document.getElementById("first-answer-line");
   const firstStreakEl = document.getElementById("first-streak");
   const firstContinue = document.getElementById("first-continue");
+  const firstDotsEl = document.getElementById("first-dots");
 
   function updateFirstStats() {
     const n = firstQueue.length;
     if (!n) {
       firstStats.textContent = "";
+      renderRoundDots(firstDotsEl, 0, 0);
       return;
     }
     firstStats.textContent = `第 ${firstPos + 1} / ${n} 题 · 本轮答对 ${firstRoundCorrect} 题`;
+    renderRoundDots(firstDotsEl, firstPos, n);
   }
 
   function advanceFirstQuestion() {
@@ -1888,16 +2139,15 @@
       markWordSeen(firstCurrent.word);
       firstRoundCorrect += 1;
       updateStreakLine(firstStreakEl, true);
-      spawnConfetti();
-      firstMsg.textContent = "正确！";
-      firstMsg.className = "msg ok";
-      firstMsg.classList.remove("hidden");
+      onAnswerCorrectFx();
+      firstMsg.classList.add("hidden");
+      showPraiseToast(praiseForToast());
       if (isAutoNext()) {
         setTimeout(() => advanceFirstQuestion(), 650);
       } else if (firstContinue) {
         firstContinue.classList.remove("hidden");
       } else {
-        advanceFirstQuestion();
+        setTimeout(() => advanceFirstQuestion(), 900);
       }
       return;
     }
