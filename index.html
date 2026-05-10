@@ -373,6 +373,19 @@
       border: 1px solid #fdba74;
       background: #fff;
     }
+    .wordbook-thumb-emoji {
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      border: 1px solid #fdba74;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      line-height: 1;
+    }
     .wordbook-body {
       flex: 1;
       min-width: 0;
@@ -651,6 +664,46 @@
       gap: 0.5rem;
       justify-content: center;
     }
+    .category-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.7rem;
+      margin-top: 0.75rem;
+    }
+    .category-card {
+      border-radius: 16px;
+      padding: 0.85rem;
+      text-align: left;
+      min-height: 88px;
+      border: 1px solid #fde68a;
+      background: #fff;
+      cursor: pointer;
+      font: inherit;
+      color: var(--text);
+      box-shadow: 0 8px 18px rgba(251, 146, 60, 0.15);
+    }
+    .category-card:hover { filter: brightness(1.02); }
+    .category-card-title { font-weight: 800; font-size: 1.05rem; }
+    .category-card-meta { color: var(--muted); font-size: 0.88rem; margin-top: 0.25rem; }
+    .figure-category-spell {
+      position: relative;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .category-spell-emoji {
+      font-size: 5rem;
+      line-height: 1;
+      user-select: none;
+    }
+    .category-spell-zh {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.15rem;
+      margin: 0.5rem 0 0.75rem;
+      color: var(--text);
+    }
     @media (max-width: 520px) {
       .modes { grid-template-columns: 1fr; }
       .mode-card { min-height: 96px; }
@@ -689,6 +742,11 @@
         <span class="mode-title">拼写模式</span>
         <span class="mode-desc">每轮 20 词，动手拼出来</span>
       </button>
+      <button type="button" id="go-category-spell" class="mode-card">
+        <span class="mode-icon">🏷️✍️</span>
+        <span class="mode-title">分类拼写</span>
+        <span class="mode-desc">按颜色、形状等主题练习拼写</span>
+      </button>
       <button type="button" id="go-first" class="mode-card">
         <span class="mode-icon">🔤🚀</span>
         <span class="mode-title">首字母模式</span>
@@ -708,6 +766,43 @@
     </div>
     <div class="wordbook-entry">
       <button type="button" id="go-wordbook" class="secondary">生词本</button>
+    </div>
+  </section>
+
+  <!-- 分类拼写：选分类 -->
+  <section id="view-category-picker" class="panel hidden">
+    <div class="toolbar">
+      <button type="button" class="secondary" id="category-picker-back">← 返回</button>
+      <span class="spacer"></span>
+    </div>
+    <h2 style="margin:0 0 0.35rem;font-size:1.35rem;">分类拼写</h2>
+    <p class="lead" style="margin-bottom:0.75rem;">选一个主题，每轮最多 20 题，且<strong>只会出现该主题下的词</strong>；本类词不足 20 个时题数会相应变少。题面会显示图片（或表情）和中文释义。</p>
+    <div class="category-picker-grid" id="category-picker-grid"></div>
+  </section>
+
+  <!-- 分类拼写测验 -->
+  <section id="view-category-spell" class="panel hidden">
+    <div class="toolbar">
+      <button type="button" class="secondary" id="category-spell-back">← 返回选分类</button>
+      <span class="spacer"></span>
+      <span class="stats" id="category-spell-stats"></span>
+    </div>
+    <p class="streak-line" id="category-spell-streak" aria-live="polite"></p>
+    <div class="round-dots" id="category-spell-dots" aria-hidden="true"></div>
+    <div class="figure figure--short figure-category-spell">
+      <img id="category-spell-img" class="fade-img" alt="" />
+      <div id="category-spell-emoji" class="category-spell-emoji hidden" aria-hidden="true"></div>
+    </div>
+    <p id="category-spell-zh" class="category-spell-zh"></p>
+    <input type="text" id="category-spell-input" autocomplete="off" spellcheck="false" placeholder="输入完整英文单词后按 Enter" />
+    <p id="category-spell-msg" class="msg hidden" role="status"></p>
+    <p id="category-spell-answer-line" class="answer-line hidden"></p>
+    <div class="btn-row">
+      <button type="button" id="category-spell-submit">提交</button>
+      <button type="button" id="category-spell-continue" class="hidden">下一题</button>
+      <button type="button" class="secondary" id="category-spell-skip">跳过</button>
+      <button type="button" class="secondary" id="category-spell-show-answer">查看答案</button>
+      <button type="button" class="secondary" id="category-spell-add-wordbook">加入生词本</button>
     </div>
   </section>
 
@@ -1054,6 +1149,310 @@
     { word: "zoo", file: "images/zoo.jpg", zh: "动物园" },
 
   ];
+  const VOCAB_SUPPLEMENT = [
+    { word: "red", zh: "红色", file: "", emoji: "🔴", category: ["color"], supplement: true },
+    { word: "blue", zh: "蓝色", file: "", emoji: "🔵", category: ["color"], supplement: true },
+    { word: "green", zh: "绿色", file: "", emoji: "🟢", category: ["color"], supplement: true },
+    { word: "yellow", zh: "黄色", file: "", emoji: "🟡", category: ["color"], supplement: true },
+    { word: "orange", zh: "橙色", file: "", emoji: "🟠", category: ["color"], supplement: true },
+    { word: "purple", zh: "紫色", file: "", emoji: "🟣", category: ["color"], supplement: true },
+    { word: "pink", zh: "粉色", file: "", emoji: "🌸", category: ["color"], supplement: true },
+    { word: "brown", zh: "棕色", file: "", emoji: "🟤", category: ["color"], supplement: true },
+    { word: "black", zh: "黑色", file: "", emoji: "⚫", category: ["color"], supplement: true },
+    { word: "white", zh: "白色", file: "", emoji: "⚪", category: ["color"], supplement: true },
+    { word: "gray", zh: "灰色", file: "", emoji: "🔘", category: ["color"], supplement: true },
+    { word: "gold", zh: "金色", file: "", emoji: "🥇", category: ["color"], supplement: true },
+    { word: "silver", zh: "银色", file: "", emoji: "🥈", category: ["color"], supplement: true },
+    { word: "circle", zh: "圆形", file: "", emoji: "⭕", category: ["shape"], supplement: true },
+    { word: "square", zh: "正方形", file: "", emoji: "🟦", category: ["shape"], supplement: true },
+    { word: "triangle", zh: "三角形", file: "", emoji: "🔺", category: ["shape"], supplement: true },
+    { word: "rectangle", zh: "长方形", file: "", emoji: "▭", category: ["shape"], supplement: true },
+    { word: "star", zh: "星形", file: "", emoji: "⭐", category: ["shape"], supplement: true },
+    { word: "heart", zh: "心形", file: "", emoji: "❤️", category: ["shape"], supplement: true },
+    { word: "oval", zh: "椭圆形", file: "", emoji: "🥚", category: ["shape"], supplement: true },
+    { word: "diamond", zh: "菱形", file: "", emoji: "💎", category: ["shape"], supplement: true },
+  ];
+  VOCAB.push(...VOCAB_SUPPLEMENT);
+
+  const PRIMARY_CATEGORY_BY_WORD = {
+    "alligator": "animal",
+    "ant": "animal",
+    "apple": "food",
+    "ax": "daily_object",
+    "ball": "daily_object",
+    "balloon": "daily_object",
+    "bat": "animal",
+    "block": "daily_object",
+    "boot": "daily_object",
+    "bottle": "daily_object",
+    "bow": "daily_object",
+    "box": "daily_object",
+    "brush": "daily_object",
+    "bus": "daily_object",
+    "can": "daily_object",
+    "candle": "daily_object",
+    "cap": "daily_object",
+    "card": "daily_object",
+    "cat": "animal",
+    "chick": "animal",
+    "chimney": "daily_object",
+    "clock": "daily_object",
+    "coat": "daily_object",
+    "comb": "daily_object",
+    "crib": "daily_object",
+    "cup": "daily_object",
+    "deer": "animal",
+    "desk": "daily_object",
+    "dinosaur": "animal",
+    "disc": "daily_object",
+    "dishes": "daily_object",
+    "dive": "uncategorized",
+    "doctor": "daily_object",
+    "dog": "animal",
+    "doll": "daily_object",
+    "door": "daily_object",
+    "drum": "daily_object",
+    "duck": "animal",
+    "egg": "food",
+    "elbow": "body",
+    "elephant": "animal",
+    "eskimo": "daily_object",
+    "fan": "daily_object",
+    "feather": "animal",
+    "fire": "daily_object",
+    "fish": "animal",
+    "five": "uncategorized",
+    "foot": "body",
+    "football": "daily_object",
+    "fork": "daily_object",
+    "four": "uncategorized",
+    "fox": "animal",
+    "game": "daily_object",
+    "garage": "daily_object",
+    "garden": "daily_object",
+    "gas pump": "daily_object",
+    "gate": "daily_object",
+    "girl": "daily_object",
+    "goat": "animal",
+    "goose": "animal",
+    "guitar": "daily_object",
+    "ham": "food",
+    "hammer": "daily_object",
+    "hand": "body",
+    "hanger": "daily_object",
+    "hat": "daily_object",
+    "helicopter": "daily_object",
+    "horn": "daily_object",
+    "horse": "animal",
+    "hose": "daily_object",
+    "house": "daily_object",
+    "igloo": "daily_object",
+    "ink": "daily_object",
+    "insects": "animal",
+    "jack in the box": "daily_object",
+    "jacket": "daily_object",
+    "jacks": "daily_object",
+    "jar": "daily_object",
+    "jeep": "daily_object",
+    "jewellery": "daily_object",
+    "jug": "daily_object",
+    "jump": "uncategorized",
+    "jump rope": "daily_object",
+    "kangaroo": "animal",
+    "key": "daily_object",
+    "kick": "uncategorized",
+    "king": "daily_object",
+    "kiss": "uncategorized",
+    "kitchen": "daily_object",
+    "kite": "daily_object",
+    "ladder": "daily_object",
+    "lamp": "daily_object",
+    "leaf": "uncategorized",
+    "leg": "body",
+    "letter": "daily_object",
+    "lips": "body",
+    "lizard": "animal",
+    "lock": "daily_object",
+    "log": "daily_object",
+    "magnet": "daily_object",
+    "mailbox": "daily_object",
+    "mask": "daily_object",
+    "milk": "food",
+    "mirror": "daily_object",
+    "mitten": "daily_object",
+    "monkey": "animal",
+    "moon": "daily_object",
+    "mop": "daily_object",
+    "nail": "daily_object",
+    "neck": "body",
+    "needle": "daily_object",
+    "net": "daily_object",
+    "newspaper": "daily_object",
+    "nine": "uncategorized",
+    "nose": "body",
+    "numbers": "uncategorized",
+    "nurse": "daily_object",
+    "nut": "food",
+    "octopus": "animal",
+    "ostrich": "animal",
+    "ox": "animal",
+    "paint": "daily_object",
+    "pan": "daily_object",
+    "pear": "food",
+    "peas": "food",
+    "pen": "daily_object",
+    "pencil": "daily_object",
+    "piano": "daily_object",
+    "picture": "daily_object",
+    "pig": "animal",
+    "pillow": "daily_object",
+    "pin": "daily_object",
+    "pocket": "daily_object",
+    "pumpkin": "food",
+    "puppet": "daily_object",
+    "puzzle": "daily_object",
+    "quack": "uncategorized",
+    "quarter": "uncategorized",
+    "queen": "daily_object",
+    "question mark": "uncategorized",
+    "raccoon": "animal",
+    "radio": "daily_object",
+    "rain": "uncategorized",
+    "rainbow": "daily_object",
+    "rake": "daily_object",
+    "rattle": "daily_object",
+    "refrigerator": "daily_object",
+    "ribbon": "daily_object",
+    "ring": "daily_object",
+    "roof": "daily_object",
+    "rooster": "animal",
+    "rope": "daily_object",
+    "rose": "uncategorized",
+    "ruler": "daily_object",
+    "sack": "daily_object",
+    "saddle": "daily_object",
+    "sandbox": "daily_object",
+    "sandwich": "food",
+    "saw": "daily_object",
+    "scissors": "daily_object",
+    "seal": "animal",
+    "seven": "uncategorized",
+    "shell": "daily_object",
+    "sink": "daily_object",
+    "six": "uncategorized",
+    "soap": "daily_object",
+    "sock": "daily_object",
+    "sun": "daily_object",
+    "table": "daily_object",
+    "tape": "daily_object",
+    "teeth": "body",
+    "ten": "uncategorized",
+    "thumb": "body",
+    "tiger": "animal",
+    "toaster": "daily_object",
+    "tomato": "food",
+    "toothbrush": "daily_object",
+    "top": "daily_object",
+    "towel": "daily_object",
+    "trunk": "daily_object",
+    "turkey": "animal",
+    "turtle": "animal",
+    "umbrella": "daily_object",
+    "umpire": "daily_object",
+    "upstairs": "uncategorized",
+    "van": "daily_object",
+    "vest": "daily_object",
+    "vine": "uncategorized",
+    "violin": "daily_object",
+    "wagon": "daily_object",
+    "watch": "daily_object",
+    "watermelon": "food",
+    "web": "daily_object",
+    "well": "daily_object",
+    "wig": "daily_object",
+    "window": "daily_object",
+    "wing": "animal",
+    "wink": "uncategorized",
+    "worm": "animal",
+    "yard": "daily_object",
+    "yarn": "daily_object",
+    "yawn": "uncategorized",
+    "yoyo": "daily_object",
+    "zebra": "animal",
+    "zero": "uncategorized",
+    "zipper": "daily_object",
+    "zoo": "animal",
+  };
+
+  function attachVocabCategories() {
+    VOCAB.forEach((e) => {
+      if (e.category && e.category.length) return;
+      const p = PRIMARY_CATEGORY_BY_WORD[e.word];
+      e.category = [p || "uncategorized"];
+    });
+  }
+  attachVocabCategories();
+
+  const QUIZ_CATEGORY_IDS = ["color", "shape", "animal", "food", "body", "daily_object"];
+  const QUIZ_CATEGORY_LABELS = {
+    color: "颜色",
+    shape: "形状",
+    animal: "动物",
+    food: "食物",
+    body: "身体部位",
+    daily_object: "日常物品",
+  };
+  function categoryFallbackEmoji(entry) {
+    const c = (entry.category && entry.category[0]) || "";
+    if (c === "animal") return "🐾";
+    if (c === "food") return "🍽️";
+    if (c === "body") return "🧍";
+    if (c === "color") return "🎨";
+    if (c === "shape") return "📐";
+    if (c === "daily_object") return "📦";
+    return "❓";
+  }
+
+  /** 显示图片；无 file 或加载失败时显示 emoji */
+  function showEntryMedia(imgEl, emojiEl, entry) {
+    if (!imgEl || !emojiEl) return;
+    imgEl.onerror = null;
+    const file = (entry.file || "").trim();
+    if (!file) {
+      imgEl.removeAttribute("src");
+      imgEl.classList.add("hidden");
+      emojiEl.textContent = entry.emoji || categoryFallbackEmoji(entry);
+      emojiEl.classList.remove("hidden");
+      return;
+    }
+    emojiEl.classList.add("hidden");
+    imgEl.classList.remove("hidden");
+    imgEl.onerror = () => {
+      imgEl.onerror = null;
+      imgEl.classList.add("hidden");
+      emojiEl.textContent = entry.emoji || categoryFallbackEmoji(entry);
+      emojiEl.classList.remove("hidden");
+    };
+    setImageWithFade(imgEl, file, entry.word);
+  }
+
+  function vocabIndicesInCategory(catId) {
+    const out = [];
+    for (let i = 0; i < VOCAB.length; i += 1) {
+      const cats = VOCAB[i].category || [];
+      if (cats.includes(catId)) out.push(i);
+    }
+    return out;
+  }
+
+  /** 仅所选类别词条，打乱后最多 ROUND_SIZE 题；不足 20 也不从其他类补齐 */
+  function buildCategorySpellQueue(catId) {
+    const pool = shuffleInPlace([...vocabIndicesInCategory(catId)]);
+    const cap = Math.min(ROUND_SIZE, pool.length);
+    return pool.slice(0, cap);
+  }
+
+
 
   const WORDBOOK_KEY = "pk_wordbook_v1";
   const SEEN_WORDS_KEY = "pk_seen_quiz_spell_first_v1";
@@ -1103,18 +1502,27 @@
     saveSeenWords(s);
   }
 
+  function isSupplementEntry(entry) {
+    return !!(entry && entry.supplement);
+  }
+
+  /** 仅含配图词条（排除分类补充的无图词条），用于常规测验与卡片模式 */
+  function coreVocabIndices() {
+    return VOCAB.map((_, i) => i).filter((i) => !isSupplementEntry(VOCAB[i]));
+  }
+
   /** 生词本未测优先，再其余未测，凑满 ROUND_SIZE 后用已测补足 */
   function buildRoundQueueIndices() {
     const seen = loadSeenWords();
     const wbWords = new Set(loadWordbook());
-    const all = VOCAB.map((_, i) => i);
+    const all = coreVocabIndices();
     const untested = all.filter((i) => !seen.has(VOCAB[i].word));
     const tested = all.filter((i) => seen.has(VOCAB[i].word));
     const wbU = shuffleInPlace(untested.filter((i) => wbWords.has(VOCAB[i].word)));
     const restU = shuffleInPlace(untested.filter((i) => !wbWords.has(VOCAB[i].word)));
     const orderedUntested = [...wbU, ...restU];
     shuffleInPlace(tested);
-    const cap = Math.min(ROUND_SIZE, VOCAB.length);
+    const cap = Math.min(ROUND_SIZE, all.length);
     const out = [];
     for (const i of orderedUntested) {
       if (out.length >= cap) break;
@@ -1128,7 +1536,7 @@
   }
 
   function pickDistinctIndices(excludeIdx, count) {
-    const pool = VOCAB.map((_, i) => i).filter((i) => i !== excludeIdx);
+    const pool = coreVocabIndices().filter((i) => i !== excludeIdx);
     shuffleInPlace(pool);
     return pool.slice(0, Math.min(count, pool.length));
   }
@@ -1235,6 +1643,8 @@
     (els || []).forEach((el) => { if (el) el.textContent = ""; });
   }
 
+  let lastCategorySpellId = null;
+
   const roundOverlay = document.getElementById("round-overlay");
   const roundOverlayBody = document.getElementById("round-overlay-body");
   const roundOverlayInner = document.querySelector(".round-overlay-inner");
@@ -1311,6 +1721,7 @@
       else if (m === "quizImage") startQuizImage();
       else if (m === "spell") startSpell();
       else if (m === "first") startFirst();
+      else if (m === "categorySpell" && lastCategorySpellId) startCategorySpell(lastCategorySpellId);
     });
   }
 
@@ -1379,12 +1790,14 @@
   }
 
   function buildPrioritizedQueue() {
-    const wb = getWordbookVocabIndices();
+    const core = coreVocabIndices();
+    const coreSet = new Set(core);
+    const wb = getWordbookVocabIndices().filter((i) => coreSet.has(i));
     const wbSet = new Set(wb);
-    const other = VOCAB.map((_, i) => i).filter((i) => !wbSet.has(i));
+    const other = core.filter((i) => !wbSet.has(i));
     shuffleInPlace(wb);
     shuffleInPlace(other);
-    return wb.length ? [...wb, ...other] : shuffleInPlace(VOCAB.map((_, i) => i));
+    return wb.length ? [...wb, ...other] : shuffleInPlace([...core]);
   }
 
   /* ===== 工具函数 ===== */
@@ -1401,7 +1814,7 @@
   }
 
   function pickDistinctWords(excludeWord, count) {
-    const pool = VOCAB.map((e) => e.word).filter((w) => w !== excludeWord);
+    const pool = VOCAB.filter((e) => !isSupplementEntry(e) && e.word !== excludeWord).map((e) => e.word);
     shuffleInPlace(pool);
     return pool.slice(0, count);
   }
@@ -1413,6 +1826,8 @@
     quizWord: document.getElementById("view-quiz-word"),
     quizImage: document.getElementById("view-quiz-image"),
     spell: document.getElementById("view-spell"),
+    categoryPicker: document.getElementById("view-category-picker"),
+    categorySpell: document.getElementById("view-category-spell"),
     first: document.getElementById("view-first"),
     wordbook: document.getElementById("view-wordbook"),
   };
@@ -1452,6 +1867,7 @@
   document.getElementById("go-quiz-word").addEventListener("click", () => guardVocab(startQuizWord));
   document.getElementById("go-quiz-image").addEventListener("click", () => guardVocab(startQuizImage));
   document.getElementById("go-spell").addEventListener("click", () => guardVocab(startSpell));
+  document.getElementById("go-category-spell").addEventListener("click", () => guardVocab(openCategoryPicker));
   document.getElementById("go-first").addEventListener("click", () => guardVocab(startFirst));
   document.getElementById("go-wordbook").addEventListener("click", () => {
     renderWordbook();
@@ -1486,10 +1902,20 @@
       const item = document.createElement("div");
       item.className = "wordbook-item";
 
-      const thumb = document.createElement("img");
-      thumb.className = "wordbook-thumb";
-      thumb.src = entry.file;
-      thumb.alt = "";
+      let thumbEl = null;
+      if ((entry.file || "").trim()) {
+        const thumb = document.createElement("img");
+        thumb.className = "wordbook-thumb";
+        thumb.src = entry.file;
+        thumb.alt = "";
+        thumbEl = thumb;
+      } else {
+        const em = document.createElement("div");
+        em.className = "wordbook-thumb-emoji";
+        em.textContent = entry.emoji || categoryFallbackEmoji(entry) || "❓";
+        em.title = word;
+        thumbEl = em;
+      }
 
       const body = document.createElement("div");
       body.className = "wordbook-body";
@@ -1509,7 +1935,7 @@
       });
       actions.appendChild(btn);
 
-      item.appendChild(thumb);
+      item.appendChild(thumbEl);
       item.appendChild(body);
       item.appendChild(actions);
       wordbookList.appendChild(item);
@@ -1549,7 +1975,7 @@
   }
 
   function buildFlashOrder() {
-    const all = VOCAB.map((_, idx) => idx);
+    const all = coreVocabIndices();
     const letter = flashFilterLetter ? flashFilterLetter.toLowerCase() : null;
     const pool = letter
       ? all.filter((idx) => firstFlashLetter(VOCAB[idx].word) === letter)
@@ -1741,7 +2167,7 @@
     quizWordCurrent = VOCAB[idx];
     setImageWithFade(quizWordImg, quizWordCurrent.file, quizWordCurrent.word);
 
-    const need = Math.min(3, VOCAB.length - 1);
+    const need = Math.min(3, Math.max(0, coreVocabIndices().length - 1));
     const wrong = pickDistinctWords(quizWordCurrent.word, need);
     const choices = shuffleInPlace([quizWordCurrent.word, ...wrong]);
 
@@ -1856,7 +2282,7 @@
     const cur = VOCAB[idx];
     quizImagePrompt.textContent = cur.word;
 
-    const need = Math.min(3, VOCAB.length - 1);
+    const need = Math.min(3, Math.max(0, coreVocabIndices().length - 1));
     const wrongIdx = pickDistinctIndices(idx, need);
     const choiceIdxs = shuffleInPlace([idx, ...wrongIdx]);
 
@@ -2070,6 +2496,176 @@
   });
   if (spellContinue) {
     spellContinue.addEventListener("click", () => advanceSpellQuestion());
+  }
+
+  function normalizeSpellAnswer(s) {
+    return String(s || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ");
+  }
+
+  function openCategoryPicker() {
+    renderCategoryPicker();
+    showView("categoryPicker");
+  }
+
+  function renderCategoryPicker() {
+    const grid = document.getElementById("category-picker-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    QUIZ_CATEGORY_IDS.forEach((cid) => {
+      const n = vocabIndicesInCategory(cid).length;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "category-card";
+      btn.innerHTML =
+        `<span class="category-card-title">${escapeHtml(QUIZ_CATEGORY_LABELS[cid] || cid)}</span>` +
+        `<div class="category-card-meta">本主题词条：${n} 个（本轮仅抽该类）</div>`;
+      btn.addEventListener("click", () => startCategorySpell(cid));
+      grid.appendChild(btn);
+    });
+  }
+
+  document.getElementById("category-picker-back").addEventListener("click", () => {
+    hideRoundComplete();
+    showView("home");
+  });
+
+  /* ===== 分类拼写（按主题） ===== */
+  let categorySpellQueue = [];
+  let categorySpellPos = 0;
+  let categorySpellCurrent = null;
+  let categorySpellRoundCorrect = 0;
+  let categorySpellCountedThisQuestion = false;
+
+  const categorySpellImg = document.getElementById("category-spell-img");
+  const categorySpellEmoji = document.getElementById("category-spell-emoji");
+  const categorySpellZh = document.getElementById("category-spell-zh");
+  const categorySpellInput = document.getElementById("category-spell-input");
+  const categorySpellMsg = document.getElementById("category-spell-msg");
+  const categorySpellStats = document.getElementById("category-spell-stats");
+  const categorySpellAnswerLine = document.getElementById("category-spell-answer-line");
+  const categorySpellStreakEl = document.getElementById("category-spell-streak");
+  const categorySpellContinue = document.getElementById("category-spell-continue");
+  const categorySpellDotsEl = document.getElementById("category-spell-dots");
+
+  document.getElementById("category-spell-back").addEventListener("click", () => {
+    hideRoundComplete();
+    openCategoryPicker();
+  });
+
+  function updateCategorySpellStats() {
+    const n = categorySpellQueue.length;
+    if (!n) {
+      categorySpellStats.textContent = "";
+      renderRoundDots(categorySpellDotsEl, 0, 0);
+      return;
+    }
+    const label = QUIZ_CATEGORY_LABELS[lastCategorySpellId] || "";
+    categorySpellStats.textContent =
+      `${label ? `「${label}」· ` : ""}第 ${categorySpellPos + 1} / ${n} 题 · 本轮答对 ${categorySpellRoundCorrect} 题`;
+    renderRoundDots(categorySpellDotsEl, categorySpellPos, n);
+  }
+
+  function renderCategorySpellQuestion() {
+    categorySpellCurrent = VOCAB[categorySpellQueue[categorySpellPos]];
+    const zhRaw = categorySpellCurrent.zh != null ? String(categorySpellCurrent.zh).trim() : "";
+    categorySpellZh.textContent = zhRaw || "（暂无中文释义）";
+    showEntryMedia(categorySpellImg, categorySpellEmoji, categorySpellCurrent);
+    categorySpellInput.focus();
+    updateCategorySpellStats();
+  }
+
+  function advanceCategorySpellQuestion() {
+    if (categorySpellContinue) categorySpellContinue.classList.add("hidden");
+    categorySpellPos += 1;
+    categorySpellCountedThisQuestion = false;
+    categorySpellMsg.classList.add("hidden");
+    categorySpellInput.value = "";
+    categorySpellAnswerLine.classList.add("hidden");
+    if (categorySpellPos >= categorySpellQueue.length) {
+      showRoundComplete("categorySpell", categorySpellRoundCorrect, categorySpellQueue.length);
+      categorySpellCurrent = null;
+      return;
+    }
+    renderCategorySpellQuestion();
+  }
+
+  function nextCategorySpellWord() {
+    if (!categorySpellCurrent) return;
+    markWordSeen(categorySpellCurrent.word);
+    updateStreakLine(categorySpellStreakEl, false);
+    advanceCategorySpellQuestion();
+  }
+
+  function checkCategorySpell() {
+    if (!categorySpellCurrent) return;
+    const guess = normalizeSpellAnswer(categorySpellInput.value);
+    const target = normalizeSpellAnswer(categorySpellCurrent.word);
+    if (guess === target) {
+      markWordSeen(categorySpellCurrent.word);
+      categorySpellRoundCorrect += 1;
+      updateStreakLine(categorySpellStreakEl, true);
+      onAnswerCorrectFx();
+      categorySpellMsg.classList.add("hidden");
+      showPraiseToast(praiseForToast());
+      if (isAutoNext()) {
+        setTimeout(() => advanceCategorySpellQuestion(), 650);
+      } else if (categorySpellContinue) {
+        categorySpellContinue.classList.remove("hidden");
+      } else {
+        setTimeout(() => advanceCategorySpellQuestion(), 900);
+      }
+      return;
+    }
+    if (!categorySpellCountedThisQuestion) {
+      categorySpellCountedThisQuestion = true;
+      updateStreakLine(categorySpellStreakEl, false);
+    }
+    categorySpellMsg.textContent = "不对，再试一次。";
+    categorySpellMsg.className = "msg bad";
+    categorySpellMsg.classList.remove("hidden");
+  }
+
+  function startCategorySpell(catId) {
+    lastCategorySpellId = catId;
+    if (categorySpellContinue) categorySpellContinue.classList.add("hidden");
+    categorySpellQueue = buildCategorySpellQueue(catId);
+    categorySpellPos = 0;
+    categorySpellRoundCorrect = 0;
+    categorySpellCountedThisQuestion = false;
+    resetStreakLine([categorySpellStreakEl]);
+    showView("categorySpell");
+    if (!categorySpellQueue.length) {
+      categorySpellStats.textContent = "暂无题目";
+      return;
+    }
+    categorySpellMsg.classList.add("hidden");
+    categorySpellInput.value = "";
+    categorySpellAnswerLine.classList.add("hidden");
+    renderCategorySpellQuestion();
+  }
+
+  document.getElementById("category-spell-submit").addEventListener("click", checkCategorySpell);
+  document.getElementById("category-spell-skip").addEventListener("click", nextCategorySpellWord);
+  document.getElementById("category-spell-show-answer").addEventListener("click", () => {
+    if (!categorySpellCurrent) return;
+    categorySpellAnswerLine.textContent = `答案：${categorySpellCurrent.word}`;
+    categorySpellAnswerLine.classList.remove("hidden");
+  });
+  document.getElementById("category-spell-add-wordbook").addEventListener("click", () => {
+    if (!categorySpellCurrent) return;
+    const added = addToWordbook(categorySpellCurrent.word);
+    categorySpellMsg.textContent = added ? "已加入生词本。" : "该单词已在生词本中。";
+    categorySpellMsg.className = added ? "msg ok" : "msg bad";
+    categorySpellMsg.classList.remove("hidden");
+  });
+  categorySpellInput.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") { ev.preventDefault(); checkCategorySpell(); }
+  });
+  if (categorySpellContinue) {
+    categorySpellContinue.addEventListener("click", () => advanceCategorySpellQuestion());
   }
 
   /* ===== 首字母模式（每轮 20） ===== */
