@@ -53,11 +53,12 @@ SUPPLEMENT = r"""
   }
   attachVocabCategories();
 
-  const QUIZ_CATEGORY_IDS = ["color", "shape", "animal", "food", "body", "daily_object"];
+  const QUIZ_CATEGORY_IDS = ["color", "shape", "animal", "insects", "food", "body", "daily_object"];
   const QUIZ_CATEGORY_LABELS = {
     color: "颜色",
     shape: "形状",
     animal: "动物",
+    insects: "昆虫",
     food: "食物",
     body: "身体部位",
     daily_object: "日常物品",
