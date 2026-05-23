@@ -1,4 +1,8 @@
-"""Draw minimal 128x128 line-art insects (JPEG)."""
+"""Draw minimal 128x128 line-art insects (JPEG).
+
+DEPRECATED: beetle, cockroach, dragonfly, fly were replaced by AI-generated 256x256
+line art (see images/*.jpg). Do NOT run this script — it will overwrite them.
+"""
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -48,15 +52,7 @@ def fly_bug(d: ImageDraw.ImageDraw) -> None:
 
 
 def main() -> None:
-    for name, draw_fn in [
-        ("dragonfly", dragonfly),
-        ("beetle", beetle),
-        ("cockroach", cockroach),
-        ("fly", fly_bug),
-    ]:
-        im = Image.new("RGB", (SIZE, SIZE), (255, 255, 255))
-        draw_fn(ImageDraw.Draw(im))
-        save(im, name)
+    raise SystemExit("Deprecated: all insect images use AI line art in images/. Do not run.")
 
 
 if __name__ == "__main__":

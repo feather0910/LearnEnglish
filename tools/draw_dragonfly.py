@@ -1,4 +1,8 @@
-"""Regenerate dragonfly.jpg via draw_insect_lineart."""
+"""Regenerate dragonfly.jpg via draw_insect_lineart.
+
+DEPRECATED: dragonfly.jpg was replaced by AI-generated 256x256 line art.
+Do NOT run this script — it will overwrite the new image.
+"""
 from draw_insect_lineart import dragonfly, save
 from PIL import Image, ImageDraw
 
