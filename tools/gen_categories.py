@@ -1,10 +1,11 @@
 import re
 from pathlib import Path
 
-html = Path(__file__).resolve().parents[1].joinpath("index.html").read_text(encoding="utf-8")
-start = html.index("const VOCAB = [")
-end = html.index("\n  ];", start)
-block = html[start:end]
+ROOT = Path(__file__).resolve().parents[1]
+vocab_js = (ROOT / "js" / "data" / "vocab.js").read_text(encoding="utf-8")
+start = vocab_js.index("const VOCAB = [")
+end = vocab_js.index("\n];", start)
+block = vocab_js[start:end]
 words = re.findall(r'word:\s*"([^"]+)"', block)
 
 insects = set(
