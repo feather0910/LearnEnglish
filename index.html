@@ -63,6 +63,10 @@
         <input type="checkbox" id="setting-sound-on" />
         胜利短音效（很轻）
       </label>
+      <label class="inline">
+        <input type="checkbox" id="setting-pronounce-on" checked />
+        单词朗读
+      </label>
       <button type="button" class="secondary" id="reset-seen-words">清空已测记录</button>
     </div>
     <div class="home-secondary-menus">
@@ -123,6 +127,7 @@
     <p id="category-spell-msg" class="msg hidden" role="status"></p>
     <p id="category-spell-answer-line" class="answer-line hidden"></p>
     <div class="btn-row">
+      <button type="button" class="secondary" id="category-spell-speak" title="听发音">🔊 听发音</button>
       <button type="button" id="category-spell-submit">提交</button>
       <button type="button" id="category-spell-continue" class="hidden">下一题</button>
       <button type="button" class="secondary" id="category-spell-skip">跳过</button>
@@ -146,6 +151,7 @@
     <div class="flash-zh concealed" id="flash-zh" title="点击显示/隐藏"></div>
     <p class="hint">点击图片或英文/中文区域可翻面；隐藏时单词与中文均不可见；按空格键也可显示／隐藏。点字母筛选，再点同一字母取消。</p>
     <div class="btn-row">
+      <button type="button" class="secondary" id="flash-speak" title="听发音">🔊 听发音</button>
       <button type="button" class="secondary" id="flash-prev">上一张</button>
       <button type="button" class="secondary" id="flash-next">下一张</button>
     </div>
@@ -164,6 +170,7 @@
     <div class="options options--quiz-words" id="quiz-word-options"></div>
     <p id="quiz-word-msg" class="msg hidden" role="status"></p>
     <div class="btn-row">
+      <button type="button" class="secondary" id="quiz-word-speak" title="听发音">🔊 听发音</button>
       <button type="button" id="quiz-word-next" class="hidden">下一题</button>
     </div>
   </section>
@@ -181,6 +188,7 @@
     <div class="options-grid-images" id="quiz-image-options"></div>
     <p id="quiz-image-msg" class="msg hidden" role="status"></p>
     <div class="btn-row">
+      <button type="button" class="secondary" id="quiz-image-speak" title="听发音">🔊 听发音</button>
       <button type="button" id="quiz-image-next" class="hidden">下一题</button>
     </div>
   </section>
@@ -208,6 +216,7 @@
     <p id="spell-msg" class="msg hidden" role="status"></p>
     <p id="spell-answer-line" class="answer-line hidden"></p>
     <div class="btn-row">
+      <button type="button" class="secondary" id="spell-speak" title="听发音">🔊 听发音</button>
       <button type="button" id="spell-submit">提交</button>
       <button type="button" id="spell-continue" class="hidden">下一题</button>
       <button type="button" class="secondary" id="spell-skip">跳过</button>
@@ -231,6 +240,7 @@
     <p id="first-msg" class="msg hidden" role="status"></p>
     <p id="first-answer-line" class="answer-line hidden"></p>
     <div class="btn-row">
+      <button type="button" class="secondary" id="first-speak" title="听发音">🔊 听发音</button>
       <button type="button" id="first-submit">提交</button>
       <button type="button" id="first-continue" class="hidden">下一题</button>
       <button type="button" class="secondary" id="first-skip">跳过</button>
@@ -273,6 +283,7 @@
   <script src="js/data/categories.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/vocab-core.js"></script>
+  <script src="js/speech.js"></script>
   <script src="js/fx.js"></script>
   <script src="js/round-ui.js"></script>
   <script src="js/nav.js"></script>

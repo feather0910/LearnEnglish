@@ -191,6 +191,10 @@ if (spellContinue) {
   spellContinue.addEventListener("click", () => advanceSpellQuestion());
 }
 
+bindSpeakButton(document.getElementById("spell-speak"), () =>
+  spellCurrent ? spellCurrent.word : ""
+);
+
 function normalizeSpellAnswer(s) {
   return String(s || "")
     .trim()

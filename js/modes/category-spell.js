@@ -133,3 +133,7 @@ categorySpellInput.addEventListener("keydown", (ev) => {
 if (categorySpellContinue) {
   categorySpellContinue.addEventListener("click", () => advanceCategorySpellQuestion());
 }
+
+bindSpeakButton(document.getElementById("category-spell-speak"), () =>
+  categorySpellCurrent ? categorySpellCurrent.word : ""
+);

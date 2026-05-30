@@ -111,3 +111,7 @@ function startQuizWord() {
 }
 
 quizWordNext.addEventListener("click", advanceQuizWord);
+
+bindSpeakButton(document.getElementById("quiz-word-speak"), () =>
+  quizWordCurrent ? quizWordCurrent.word : ""
+);

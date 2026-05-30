@@ -127,3 +127,7 @@ firstInput.addEventListener("keydown", (ev) => {
 if (firstContinue) {
   firstContinue.addEventListener("click", () => advanceFirstQuestion());
 }
+
+bindSpeakButton(document.getElementById("first-speak"), () =>
+  firstCurrent ? firstCurrent.word : ""
+);
