@@ -167,6 +167,11 @@ flashWord.addEventListener("click", toggleFlashReveal);
 flashZh.addEventListener("click", toggleFlashReveal);
 flashImg.addEventListener("click",  toggleFlashReveal);
 
+bindSpeakButton(document.getElementById("flash-speak"), () => {
+  if (!flashOrder.length) return "";
+  return VOCAB[flashOrder[flashPos]].word;
+});
+
 document.addEventListener("keydown", (ev) => {
   if (views.flash.classList.contains("hidden")) return;
   if (!flashOrder.length) return;

@@ -81,8 +81,22 @@ function renderReviewList(group) {
       `<div class="wordbook-en">${escapeHtml(word)}</div>` +
       `<div class="wordbook-zh">${zhLine}</div>`;
 
+    const actions = document.createElement("div");
+    actions.className = "wordbook-actions";
+    const speakBtn = document.createElement("button");
+    speakBtn.type = "button";
+    speakBtn.className = "secondary";
+    speakBtn.textContent = "🔊";
+    speakBtn.title = "听发音";
+    speakBtn.addEventListener("click", () => {
+      unlockSpeech();
+      speakEnglish(word);
+    });
+    actions.appendChild(speakBtn);
+
     item.appendChild(thumbEl);
     item.appendChild(body);
+    item.appendChild(actions);
     reviewFocusList.appendChild(item);
   });
 }

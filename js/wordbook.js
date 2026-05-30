@@ -49,6 +49,15 @@ function renderWordbook() {
 
     const actions = document.createElement("div");
     actions.className = "wordbook-actions";
+    const speakBtn = document.createElement("button");
+    speakBtn.type = "button";
+    speakBtn.className = "secondary";
+    speakBtn.textContent = "🔊";
+    speakBtn.title = "听发音";
+    speakBtn.addEventListener("click", () => {
+      unlockSpeech();
+      speakEnglish(word);
+    });
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "secondary";
@@ -57,6 +66,7 @@ function renderWordbook() {
       removeFromWordbook(word);
       renderWordbook();
     });
+    actions.appendChild(speakBtn);
     actions.appendChild(btn);
 
     item.appendChild(thumbEl);

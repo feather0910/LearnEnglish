@@ -117,3 +117,8 @@ function startQuizImage() {
 }
 
 quizImageNext.addEventListener("click", advanceQuizImage);
+
+bindSpeakButton(document.getElementById("quiz-image-speak"), () => {
+  if (quizImageAnswerIdx < 0) return "";
+  return VOCAB[quizImageAnswerIdx].word;
+});

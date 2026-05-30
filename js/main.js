@@ -23,6 +23,7 @@ document.getElementById("go-review-focus").addEventListener("click", () => {
 
 const settingAutoNext = document.getElementById("setting-auto-next");
 const settingSoundOn = document.getElementById("setting-sound-on");
+const settingPronounceOn = document.getElementById("setting-pronounce-on");
 const s0 = loadSettings();
 if (settingAutoNext) {
   settingAutoNext.checked = s0.autoNext;
@@ -34,6 +35,12 @@ if (settingSoundOn) {
   settingSoundOn.checked = s0.soundOn;
   settingSoundOn.addEventListener("change", () => {
     saveSettings({ soundOn: settingSoundOn.checked });
+  });
+}
+if (settingPronounceOn) {
+  settingPronounceOn.checked = s0.pronounceOn;
+  settingPronounceOn.addEventListener("change", () => {
+    saveSettings({ pronounceOn: settingPronounceOn.checked });
   });
 }
 

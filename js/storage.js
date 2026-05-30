@@ -1,5 +1,5 @@
 function loadSettings() {
-  const defaults = { autoNext: true, soundOn: false };
+  const defaults = { autoNext: true, soundOn: false, pronounceOn: true };
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return { ...defaults };
@@ -7,6 +7,8 @@ function loadSettings() {
     return {
       autoNext: o && typeof o.autoNext === "boolean" ? o.autoNext : defaults.autoNext,
       soundOn: o && typeof o.soundOn === "boolean" ? o.soundOn : defaults.soundOn,
+      pronounceOn:
+        o && typeof o.pronounceOn === "boolean" ? o.pronounceOn : defaults.pronounceOn,
     };
   } catch {
     return { ...defaults };
