@@ -22,6 +22,13 @@ const REVIEW_FOCUS_GROUPS = [
       "put up",
       "camping",
       "buckle up",
+      "instruments",
+      "note",
+      "tambourine",
+      "maracas",
+      "triangle",
+      "wood block",
+      "cymbals",
     ],
   },
 ];
