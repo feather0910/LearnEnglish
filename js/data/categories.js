@@ -257,9 +257,10 @@ function categoryFallbackEmoji(entry) {
 /** 显示图片；无 file 或加载失败时显示 emoji */
 function showEntryMedia(imgEl, emojiEl, entry) {
   if (!imgEl || !emojiEl) return;
-  imgEl.onerror = null;
+  const figure = imgEl.closest(".figure");
   const file = (entry.file || "").trim();
   if (!file) {
+    setFigureLoading(figure, false);
     imgEl.removeAttribute("src");
     imgEl.classList.add("hidden");
     emojiEl.textContent = entry.emoji || categoryFallbackEmoji(entry);
@@ -267,14 +268,13 @@ function showEntryMedia(imgEl, emojiEl, entry) {
     return;
   }
   emojiEl.classList.add("hidden");
-  imgEl.classList.remove("hidden");
-  imgEl.onerror = () => {
-    imgEl.onerror = null;
-    imgEl.classList.add("hidden");
-    emojiEl.textContent = entry.emoji || categoryFallbackEmoji(entry);
-    emojiEl.classList.remove("hidden");
-  };
-  setImageWithFade(imgEl, file, entry.word);
+  setImageWithFade(imgEl, file, entry.word, {
+    onError: () => {
+      imgEl.classList.add("hidden");
+      emojiEl.textContent = entry.emoji || categoryFallbackEmoji(entry);
+      emojiEl.classList.remove("hidden");
+    },
+  });
 }
 
 function vocabIndicesInCategory(catId) {
