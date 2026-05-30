@@ -1,0 +1,95 @@
+/** 重点复习词汇：一级菜单 → 日期子菜单 → 词表 */
+const REVIEW_FOCUS_GROUPS = [
+  {
+    id: "2025-05-30",
+    label: "5月30日",
+    words: [
+      "sleeping bags",
+      "tent",
+      "van",
+      "horn",
+      "siren",
+      "ambulance",
+      "police car",
+      "railroad crossing",
+      "pickup truck",
+      "dump truck",
+      "garbage truck",
+      "almost",
+      "campfire",
+      "drive",
+      "honk",
+      "put up",
+      "camping",
+      "buckle up",
+    ],
+  },
+];
+
+/** 复习词中文（词表无 zh 或需覆盖时使用） */
+const REVIEW_FOCUS_ZH = {
+  "sleeping bags": "睡袋",
+  tent: "帐篷",
+  van: "面包车，厢式货车",
+  horn: "（汽车）喇叭",
+  siren: "警笛，警报器",
+  ambulance: "救护车",
+  "police car": "警车",
+  "railroad crossing": "铁路道口",
+  "pickup truck": "皮卡",
+  "dump truck": "翻斗车，渣土车",
+  "garbage truck": "垃圾车",
+  almost: "几乎，差不多",
+  campfire: "营火，篝火",
+  drive: "驾驶，开车",
+  honk: "按喇叭",
+  "put up": "搭建，支起",
+  camping: "露营",
+  "buckle up": "系好安全带",
+};
+
+const REVIEW_FOCUS_EMOJI = {
+  "sleeping bags": "🛏️",
+  tent: "⛺",
+  van: "🚐",
+  horn: "📣",
+  siren: "🚨",
+  ambulance: "🚑",
+  "police car": "🚓",
+  "railroad crossing": "🚧",
+  "pickup truck": "🛻",
+  "dump truck": "🚛",
+  "garbage truck": "🗑️",
+  almost: "≈",
+  campfire: "🔥",
+  drive: "🚗",
+  honk: "📯",
+  "put up": "🏕️",
+  camping: "🏕️",
+  "buckle up": "💺",
+};
+
+function vocabEntryByWord(word) {
+  const key = String(word).trim().toLowerCase();
+  for (let i = 0; i < VOCAB.length; i += 1) {
+    if (VOCAB[i].word.trim().toLowerCase() === key) return VOCAB[i];
+  }
+  return null;
+}
+
+function reviewFocusEntry(word) {
+  const base = vocabEntryByWord(word);
+  const zh =
+    REVIEW_FOCUS_ZH[word] ||
+    (base && base.zh && String(base.zh).trim()) ||
+    "";
+  const emoji = (base && base.emoji) || REVIEW_FOCUS_EMOJI[word] || "📖";
+  const file = (base && base.file) || "";
+  return {
+    word,
+    zh,
+    file,
+    emoji,
+    vocabEntry: base,
+  };
+}
