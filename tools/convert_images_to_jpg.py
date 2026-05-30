@@ -1,4 +1,4 @@
-"""Convert all PNGs under images/ to 256x256 JPEG (cover crop, white background)."""
+"""Convert all PNGs under images/ to 256x256 JPEG (letterbox fit, white background)."""
 from __future__ import annotations
 
 import sys
@@ -23,13 +23,23 @@ def to_rgb_white_bg(im: Image.Image) -> Image.Image:
     return im
 
 
+def letterbox(im: Image.Image, size: tuple[int, int] = SIZE, fill: tuple[int, int, int] = (255, 255, 255)) -> Image.Image:
+    """Scale to fit inside size without cropping (preserve full illustration)."""
+    rgb = to_rgb_white_bg(im)
+    boxed = ImageOps.contain(rgb, size, method=Image.Resampling.LANCZOS)
+    out = Image.new("RGB", size, fill)
+    x = (size[0] - boxed.width) // 2
+    y = (size[1] - boxed.height) // 2
+    out.paste(boxed, (x, y))
+    return out
+
+
 def convert_one(png_path: Path) -> Path | None:
     jpg_path = png_path.with_suffix(".jpg")
     try:
         with Image.open(png_path) as im:
             im = im.copy()
-        rgb = to_rgb_white_bg(im)
-        out = ImageOps.fit(rgb, SIZE, method=Image.Resampling.LANCZOS)
+        out = letterbox(im)
         out.save(jpg_path, **JPEG_KW)
     except OSError as e:
         print(f"FAIL {png_path}: {e}", file=sys.stderr)
