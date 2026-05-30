@@ -347,6 +347,28 @@
     .wordbook-entry {
       margin-top: 0.8rem;
     }
+    .home-review-top {
+      margin-bottom: 1rem;
+    }
+    .home-review-top .mode-card--menu {
+      width: 100%;
+      text-align: left;
+    }
+    .review-list-actions {
+      margin-top: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+    .figure.figure-spell {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      width: min(280px, 100%);
+      max-width: 100%;
+      margin-inline: auto;
+      height: auto;
+      min-height: 0;
+      padding: 0.65rem;
+      box-sizing: border-box;
+    }
     .home-secondary-menus {
       margin-top: 1rem;
       display: flex;

@@ -4,8 +4,11 @@ let spellPos = 0;
 let spellCurrent = null;
 let spellRoundCorrect = 0;
 let spellCountedThisQuestion = false;
+let spellReviewGroupId = null;
 
 const spellImg = document.getElementById("spell-img");
+const spellEmoji = document.getElementById("spell-emoji");
+const spellZh = document.getElementById("spell-zh");
 const spellInput = document.getElementById("spell-input");
 const spellMsg = document.getElementById("spell-msg");
 const spellStats = document.getElementById("spell-stats");
@@ -23,8 +26,31 @@ function updateSpellStats() {
     renderRoundDots(spellDotsEl, 0, 0);
     return;
   }
-  spellStats.textContent = `第 ${spellPos + 1} / ${n} 题 · 本轮答对 ${spellRoundCorrect} 题`;
+  let prefix = "";
+  if (spellReviewGroupId) {
+    const g = REVIEW_FOCUS_GROUPS.find((x) => x.id === spellReviewGroupId);
+    if (g) prefix = `「${g.label}」· `;
+  }
+  spellStats.textContent = `${prefix}第 ${spellPos + 1} / ${n} 题 · 本轮答对 ${spellRoundCorrect} 题`;
   renderRoundDots(spellDotsEl, spellPos, n);
+}
+
+function renderSpellQuestion() {
+  spellCurrent = VOCAB[spellQueue[spellPos]];
+  showEntryMedia(spellImg, spellEmoji, spellCurrent);
+  const zhRaw = spellCurrent.zh != null ? String(spellCurrent.zh).trim() : "";
+  if (spellZh) {
+    if (zhRaw) {
+      spellZh.textContent = zhRaw;
+      spellZh.classList.remove("hidden");
+    } else {
+      spellZh.textContent = "";
+      spellZh.classList.add("hidden");
+    }
+  }
+  updateSpellHint();
+  spellInput.focus();
+  updateSpellStats();
 }
 
 function updateSpellHint() {
@@ -44,15 +70,12 @@ function advanceSpellQuestion() {
   spellInput.value = "";
   spellAnswerLine.classList.add("hidden");
   if (spellPos >= spellQueue.length) {
-    showRoundComplete("spell", spellRoundCorrect, spellQueue.length);
+    const mode = spellReviewGroupId ? "reviewFocusSpell" : "spell";
+    showRoundComplete(mode, spellRoundCorrect, spellQueue.length);
     spellCurrent = null;
     return;
   }
-  spellCurrent = VOCAB[spellQueue[spellPos]];
-  setImageWithFade(spellImg, spellCurrent.file, spellCurrent.word);
-  updateSpellHint();
-  spellInput.focus();
-  updateSpellStats();
+  renderSpellQuestion();
 }
 
 function nextSpellWord() {
@@ -92,6 +115,8 @@ function checkSpell() {
 }
 
 function startSpell() {
+  spellReviewGroupId = null;
+  lastReviewFocusGroupId = null;
   if (spellContinue) spellContinue.classList.add("hidden");
   spellQueue = buildRoundQueueIndices();
   spellPos = 0;
@@ -103,15 +128,44 @@ function startSpell() {
     spellStats.textContent = "词表为空";
     return;
   }
-  spellCurrent = VOCAB[spellQueue[spellPos]];
   spellMsg.classList.add("hidden");
   spellInput.value = "";
   spellAnswerLine.classList.add("hidden");
-  setImageWithFade(spellImg, spellCurrent.file, spellCurrent.word);
-  updateSpellHint();
-  updateSpellStats();
-  spellInput.focus();
+  renderSpellQuestion();
 }
+
+function startReviewFocusSpell(groupId) {
+  const group = REVIEW_FOCUS_GROUPS.find((g) => g.id === groupId);
+  if (!group) return;
+  spellReviewGroupId = groupId;
+  lastReviewFocusGroupId = groupId;
+  if (spellContinue) spellContinue.classList.add("hidden");
+  spellQueue = buildReviewFocusSpellQueue(groupId);
+  spellPos = 0;
+  spellRoundCorrect = 0;
+  spellCountedThisQuestion = false;
+  resetStreakLine([spellStreakEl]);
+  showView("spell");
+  if (!spellQueue.length) {
+    spellStats.textContent = "该日期暂无可用词条";
+    return;
+  }
+  spellMsg.classList.add("hidden");
+  spellInput.value = "";
+  spellAnswerLine.classList.add("hidden");
+  renderSpellQuestion();
+}
+
+document.getElementById("spell-back")?.addEventListener("click", () => {
+  hideRoundComplete();
+  if (spellReviewGroupId) {
+    const id = spellReviewGroupId;
+    spellReviewGroupId = null;
+    openReviewList(id);
+  } else {
+    showView("home");
+  }
+});
 
 spellHintToggle.addEventListener("change", updateSpellHint);
 document.getElementById("spell-submit").addEventListener("click", checkSpell);

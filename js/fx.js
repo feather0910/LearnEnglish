@@ -101,3 +101,4 @@ function resetStreakLine(els) {
 }
 
 let lastCategorySpellId = null;
+let lastReviewFocusGroupId = null;

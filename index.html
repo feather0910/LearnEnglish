@@ -17,6 +17,13 @@
       <p class="lead">和爸爸妈妈一起：看图、选词、拼一拼，每天玩一小会儿就超棒。</p>
     </div>
     <p id="home-empty" class="empty hidden">词表为空：请先在 <code>VOCAB</code> 中添加条目。</p>
+    <div class="home-review-top">
+      <button type="button" id="go-review-focus" class="mode-card mode-card--menu">
+        <span class="mode-icon">⭐📚</span>
+        <span class="mode-title">重点复习词汇</span>
+        <span class="mode-desc">按日期查看需要巩固的单词</span>
+      </button>
+    </div>
     <div class="modes">
       <button type="button" id="go-flash" class="mode-card">
         <span class="mode-icon">🃏✨</span>
@@ -61,11 +68,6 @@
       <button type="button" class="secondary" id="reset-seen-words">清空已测记录</button>
     </div>
     <div class="home-secondary-menus">
-      <button type="button" id="go-review-focus" class="mode-card mode-card--menu">
-        <span class="mode-icon">⭐📚</span>
-        <span class="mode-title">重点复习词汇</span>
-        <span class="mode-desc">按日期查看需要巩固的单词</span>
-      </button>
       <button type="button" id="go-wordbook" class="secondary">生词本</button>
     </div>
   </section>
@@ -88,6 +90,9 @@
       <span class="spacer"></span>
     </div>
     <h2 class="wordbook-panel-title" id="review-list-title">重点复习</h2>
+    <div class="btn-row review-list-actions">
+      <button type="button" id="review-start-spell">开始测试</button>
+    </div>
     <div id="review-focus-list" class="wordbook-list"></div>
   </section>
 
@@ -185,13 +190,17 @@
   <!-- 拼写模式 -->
   <section id="view-spell" class="panel hidden">
     <div class="toolbar">
-      <button type="button" class="secondary back-btn" data-back>← 返回</button>
+      <button type="button" class="secondary" id="spell-back">← 返回</button>
       <span class="spacer"></span>
       <span class="stats" id="spell-stats"></span>
     </div>
     <p class="streak-line" id="spell-streak" aria-live="polite"></p>
     <div class="round-dots" id="spell-dots" aria-hidden="true"></div>
-    <div class="figure figure--short"><img id="spell-img" class="fade-img" alt="" /></div>
+    <div class="figure figure-spell">
+      <img id="spell-img" class="fade-img" alt="" />
+      <div id="spell-emoji" class="category-spell-emoji hidden" aria-hidden="true"></div>
+    </div>
+    <p id="spell-zh" class="category-spell-zh hidden"></p>
     <label class="inline" style="margin-top:0.75rem">
       <input type="checkbox" id="spell-hint-toggle" checked />
       显示首字母提示
