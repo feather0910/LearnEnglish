@@ -81,3 +81,8 @@ document.getElementById("review-picker-back")?.addEventListener("click", () => {
 document.getElementById("review-list-back")?.addEventListener("click", () => {
   showView("reviewPicker");
 });
+
+document.getElementById("review-start-spell")?.addEventListener("click", () => {
+  if (!activeReviewGroupId) return;
+  startReviewFocusSpell(activeReviewGroupId);
+});

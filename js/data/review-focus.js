@@ -70,11 +70,27 @@ const REVIEW_FOCUS_EMOJI = {
 };
 
 function vocabEntryByWord(word) {
+  const idx = vocabIndexByWord(word);
+  return idx >= 0 ? VOCAB[idx] : null;
+}
+
+function vocabIndexByWord(word) {
   const key = String(word).trim().toLowerCase();
   for (let i = 0; i < VOCAB.length; i += 1) {
-    if (VOCAB[i].word.trim().toLowerCase() === key) return VOCAB[i];
+    if (VOCAB[i].word.trim().toLowerCase() === key) return i;
   }
-  return null;
+  return -1;
+}
+
+function buildReviewFocusSpellQueue(groupId) {
+  const group = REVIEW_FOCUS_GROUPS.find((g) => g.id === groupId);
+  if (!group) return [];
+  const indices = [];
+  group.words.forEach((w) => {
+    const idx = vocabIndexByWord(w);
+    if (idx >= 0) indices.push(idx);
+  });
+  return shuffleInPlace(indices);
 }
 
 function reviewFocusEntry(word) {
