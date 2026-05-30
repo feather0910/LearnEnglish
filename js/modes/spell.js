@@ -49,7 +49,7 @@ function renderSpellQuestion() {
     }
   }
   updateSpellHint();
-  spellInput.focus();
+  spellInput?.focus();
   updateSpellStats();
 }
 
@@ -137,6 +137,7 @@ function startSpell() {
 function startReviewFocusSpell(groupId) {
   const group = REVIEW_FOCUS_GROUPS.find((g) => g.id === groupId);
   if (!group) return;
+  if (typeof buildReviewFocusSpellQueue !== "function") return;
   spellReviewGroupId = groupId;
   lastReviewFocusGroupId = groupId;
   if (spellContinue) spellContinue.classList.add("hidden");
@@ -155,6 +156,7 @@ function startReviewFocusSpell(groupId) {
   spellAnswerLine.classList.add("hidden");
   renderSpellQuestion();
 }
+window.startReviewFocusSpell = startReviewFocusSpell;
 
 document.getElementById("spell-back")?.addEventListener("click", () => {
   hideRoundComplete();
@@ -167,7 +169,7 @@ document.getElementById("spell-back")?.addEventListener("click", () => {
   }
 });
 
-spellHintToggle.addEventListener("change", updateSpellHint);
+spellHintToggle?.addEventListener("change", updateSpellHint);
 document.getElementById("spell-submit").addEventListener("click", checkSpell);
 document.getElementById("spell-skip").addEventListener("click", nextSpellWord);
 document.getElementById("spell-show-answer").addEventListener("click", () => {
@@ -182,7 +184,7 @@ document.getElementById("spell-add-wordbook").addEventListener("click", () => {
   spellMsg.className = added ? "msg ok" : "msg bad";
   spellMsg.classList.remove("hidden");
 });
-spellInput.addEventListener("keydown", (ev) => {
+spellInput?.addEventListener("keydown", (ev) => {
   if (ev.key === "Enter") { ev.preventDefault(); checkSpell(); }
 });
 if (spellContinue) {

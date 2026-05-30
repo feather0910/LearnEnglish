@@ -31,7 +31,20 @@ function openReviewList(groupId) {
   activeReviewGroupId = groupId;
   if (reviewListTitle) reviewListTitle.textContent = `重点复习 · ${group.label}`;
   renderReviewList(group);
+  bindReviewStartSpell(groupId);
   showView("reviewList");
+}
+
+function bindReviewStartSpell(groupId) {
+  const btn = document.getElementById("review-start-spell");
+  if (!btn) return;
+  btn.onclick = () => {
+    if (typeof startReviewFocusSpell !== "function") {
+      console.error("startReviewFocusSpell is not loaded");
+      return;
+    }
+    startReviewFocusSpell(groupId);
+  };
 }
 
 function renderReviewList(group) {
@@ -82,7 +95,3 @@ document.getElementById("review-list-back")?.addEventListener("click", () => {
   showView("reviewPicker");
 });
 
-document.getElementById("review-start-spell")?.addEventListener("click", () => {
-  if (!activeReviewGroupId) return;
-  startReviewFocusSpell(activeReviewGroupId);
-});
