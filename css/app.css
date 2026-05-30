@@ -46,6 +46,7 @@
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
       padding: 1.25rem;
+      overflow-x: clip;
     }
     .hidden { display: none !important; }
     .btn-row {
@@ -184,6 +185,8 @@
       background: linear-gradient(145deg, #fff1cc, #dbeafe);
       border: 1px solid var(--border);
       aspect-ratio: 1 / 1;
+      width: 100%;
+      max-width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -199,6 +202,9 @@
     /* 拼写、首字母：主图区域较扁（沿用） */
     .figure.figure--short {
       aspect-ratio: 2 / 1;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
     }
     /* 素材按 256×256：看图选词题干区缩小展示（正方形，边长约 200px） */
     .figure.figure--quiz-word {
@@ -678,12 +684,15 @@
     .category-card:hover { filter: brightness(1.02); }
     .category-card-title { font-weight: 800; font-size: 1.05rem; }
     .category-card-meta { color: var(--muted); font-size: 0.88rem; margin-top: 0.25rem; }
-    .figure-category-spell {
+    /* 分类拼写：256×256 方图，限制宽度避免 min-height 把 2:1 容器撑出屏幕 */
+    .figure.figure-category-spell {
       position: relative;
-      min-height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      aspect-ratio: 1 / 1;
+      width: min(280px, 100%);
+      max-width: 100%;
+      margin-inline: auto;
+      height: auto;
+      min-height: 0;
     }
     .category-spell-emoji {
       font-size: 5rem;
