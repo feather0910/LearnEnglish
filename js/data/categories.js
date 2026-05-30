@@ -41,7 +41,7 @@ const PRIMARY_CATEGORY_BY_WORD = {
   "dragonfly": "insects",
   "doll": "daily_object",
   "door": "daily_object",
-  "drum": "daily_object",
+  "drum": "instrument",
   "duck": "animal",
   "egg": "food",
   "elbow": "body",
@@ -67,7 +67,7 @@ const PRIMARY_CATEGORY_BY_WORD = {
   "goat": "animal",
   "goose": "animal",
   "grasshopper": "insects",
-  "guitar": "daily_object",
+  "guitar": "instrument",
   "ham": "food",
   "hammer": "daily_object",
   "hand": "body",
@@ -137,7 +137,7 @@ const PRIMARY_CATEGORY_BY_WORD = {
   "peas": "food",
   "pen": "daily_object",
   "pencil": "daily_object",
-  "piano": "daily_object",
+  "piano": "instrument",
   "picture": "daily_object",
   "pig": "animal",
   "pillow": "daily_object",
@@ -198,7 +198,7 @@ const PRIMARY_CATEGORY_BY_WORD = {
   "van": "daily_object",
   "vest": "daily_object",
   "vine": "uncategorized",
-  "violin": "daily_object",
+  "violin": "instrument",
   "wagon": "daily_object",
   "watch": "daily_object",
   "watermelon": "food",
@@ -228,7 +228,7 @@ function attachVocabCategories() {
 }
 attachVocabCategories();
 
-const QUIZ_CATEGORY_IDS = ["color", "shape", "animal", "insects", "food", "body", "occupation", "daily_object"];
+const QUIZ_CATEGORY_IDS = ["color", "shape", "animal", "insects", "food", "body", "occupation", "instrument", "daily_object"];
 const QUIZ_CATEGORY_LABELS = {
   color: "颜色",
   shape: "形状",
@@ -237,6 +237,7 @@ const QUIZ_CATEGORY_LABELS = {
   food: "食物",
   body: "身体部位",
   occupation: "职业",
+  instrument: "乐器",
   daily_object: "日常物品",
 };
 function categoryFallbackEmoji(entry) {
@@ -248,6 +249,7 @@ function categoryFallbackEmoji(entry) {
   if (c === "color") return "🎨";
   if (c === "shape") return "📐";
   if (c === "occupation") return "👔";
+  if (c === "instrument") return "🎵";
   if (c === "daily_object") return "📦";
   return "❓";
 }
