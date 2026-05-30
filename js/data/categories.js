@@ -228,7 +228,7 @@ function attachVocabCategories() {
 }
 attachVocabCategories();
 
-const QUIZ_CATEGORY_IDS = ["color", "shape", "animal", "insects", "food", "body", "occupation", "daily_object"];
+const QUIZ_CATEGORY_IDS = ["color", "shape", "animal", "insects", "food", "body", "occupation", "vocab_extension", "daily_object"];
 const QUIZ_CATEGORY_LABELS = {
   color: "颜色",
   shape: "形状",
@@ -237,6 +237,7 @@ const QUIZ_CATEGORY_LABELS = {
   food: "食物",
   body: "身体部位",
   occupation: "职业",
+  vocab_extension: "词汇拓展",
   daily_object: "日常物品",
 };
 function categoryFallbackEmoji(entry) {
@@ -248,6 +249,7 @@ function categoryFallbackEmoji(entry) {
   if (c === "color") return "🎨";
   if (c === "shape") return "📐";
   if (c === "occupation") return "👔";
+  if (c === "vocab_extension") return "📚";
   if (c === "daily_object") return "📦";
   return "❓";
 }

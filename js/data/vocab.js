@@ -225,7 +225,7 @@ const VOCAB_SUPPLEMENT = [
   { word: "silver", zh: "银色", file: "", emoji: "🥈", category: ["color"], supplement: true },
   { word: "circle", zh: "圆形", file: "", emoji: "⭕", category: ["shape"], supplement: true },
   { word: "square", zh: "正方形", file: "", emoji: "🟦", category: ["shape"], supplement: true },
-  { word: "triangle", zh: "三角形", file: "", emoji: "🔺", category: ["shape"], supplement: true },
+  { word: "triangle", zh: "三角形；三角铁（乐器）", file: "", emoji: "🔺", category: ["shape", "vocab_extension"], supplement: true },
   { word: "rectangle", zh: "长方形", file: "", emoji: "▭", category: ["shape"], supplement: true },
   { word: "star", zh: "星形", file: "", emoji: "⭐", category: ["shape"], supplement: true },
   { word: "heart", zh: "心形", file: "", emoji: "❤️", category: ["shape"], supplement: true },
@@ -276,5 +276,11 @@ const VOCAB_SUPPLEMENT = [
   { word: "policeman", zh: "警察", file: "images/policeman.jpg", emoji: "👮", category: ["occupation"] },
   { word: "businessman", zh: "商人，企业家", file: "images/businessman.jpg", emoji: "💼", category: ["occupation"] },
   { word: "waitress", zh: "女服务员", file: "images/waitress.jpg", emoji: "🍽️", category: ["occupation"] },
+  { word: "instruments", zh: "乐器（总称）", file: "", emoji: "🎸", category: ["vocab_extension"], supplement: true },
+  { word: "note", zh: "音符", file: "", emoji: "🎵", category: ["vocab_extension"], supplement: true },
+  { word: "tambourine", zh: "铃鼓", file: "", emoji: "🪇", category: ["vocab_extension"], supplement: true },
+  { word: "maracas", zh: "沙锤", file: "", emoji: "🪇", category: ["vocab_extension"], supplement: true },
+  { word: "wood block", zh: "木鱼（打击乐）", file: "", emoji: "🪵", category: ["vocab_extension"], supplement: true },
+  { word: "cymbals", zh: "钹，镲", file: "", emoji: "🥁", category: ["vocab_extension"], supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);
