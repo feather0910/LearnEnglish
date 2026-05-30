@@ -60,9 +60,35 @@
       </label>
       <button type="button" class="secondary" id="reset-seen-words">清空已测记录</button>
     </div>
-    <div class="wordbook-entry">
+    <div class="home-secondary-menus">
+      <button type="button" id="go-review-focus" class="mode-card mode-card--menu">
+        <span class="mode-icon">⭐📚</span>
+        <span class="mode-title">重点复习词汇</span>
+        <span class="mode-desc">按日期查看需要巩固的单词</span>
+      </button>
       <button type="button" id="go-wordbook" class="secondary">生词本</button>
     </div>
+  </section>
+
+  <!-- 重点复习：选日期 -->
+  <section id="view-review-picker" class="panel hidden">
+    <div class="toolbar">
+      <button type="button" class="secondary" id="review-picker-back">← 返回</button>
+      <span class="spacer"></span>
+    </div>
+    <h2 style="margin:0 0 0.35rem;font-size:1.35rem;">重点复习词汇</h2>
+    <p class="lead" style="margin-bottom:0.75rem;">选择一个日期，查看该日重点复习词表。</p>
+    <div class="category-picker-grid" id="review-picker-grid"></div>
+  </section>
+
+  <!-- 重点复习：词表 -->
+  <section id="view-review-list" class="panel hidden">
+    <div class="toolbar">
+      <button type="button" class="secondary" id="review-list-back">← 返回选日期</button>
+      <span class="spacer"></span>
+    </div>
+    <h2 class="wordbook-panel-title" id="review-list-title">重点复习</h2>
+    <div id="review-focus-list" class="wordbook-list"></div>
   </section>
 
   <!-- 分类拼写：选分类 -->
@@ -243,7 +269,9 @@
   <script src="js/fx.js"></script>
   <script src="js/round-ui.js"></script>
   <script src="js/nav.js"></script>
+  <script src="js/data/review-focus.js"></script>
   <script src="js/wordbook.js"></script>
+  <script src="js/review-focus.js"></script>
   <script src="js/modes/flash.js"></script>
   <script src="js/modes/quiz-word.js"></script>
   <script src="js/modes/quiz-image.js"></script>

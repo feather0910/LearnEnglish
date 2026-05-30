@@ -347,6 +347,20 @@
     .wordbook-entry {
       margin-top: 0.8rem;
     }
+    .home-secondary-menus {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      align-items: stretch;
+    }
+    .mode-card.mode-card--menu {
+      width: 100%;
+      text-align: left;
+    }
+    .home-secondary-menus > .secondary {
+      align-self: center;
+    }
     .wordbook-panel-title {
       margin: 0 0 0.35rem;
       font-size: 1.3rem;

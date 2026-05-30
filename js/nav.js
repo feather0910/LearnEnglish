@@ -9,6 +9,8 @@ const views = {
   categorySpell: document.getElementById("view-category-spell"),
   first: document.getElementById("view-first"),
   wordbook: document.getElementById("view-wordbook"),
+  reviewPicker: document.getElementById("view-review-picker"),
+  reviewList: document.getElementById("view-review-list"),
 };
 
 function showView(name) {

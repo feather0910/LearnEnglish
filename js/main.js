@@ -17,6 +17,9 @@ document.getElementById("go-wordbook").addEventListener("click", () => {
   renderWordbook();
   showView("wordbook");
 });
+document.getElementById("go-review-focus").addEventListener("click", () => {
+  openReviewPicker();
+});
 
 const settingAutoNext = document.getElementById("setting-auto-next");
 const settingSoundOn = document.getElementById("setting-sound-on");
