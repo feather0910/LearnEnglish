@@ -49,12 +49,22 @@ function buildQuizImageQuestion() {
     b.type = "button";
     b.className = "option-image";
     b.dataset.vocabIdx = String(ci);
+    b.disabled = true;
     const im = document.createElement("img");
-    im.src = ent.file;
-    im.alt = "";
+    im.classList.add("hidden");
     b.appendChild(im);
     b.addEventListener("click", () => onQuizImagePick(ci, b));
     quizImageOptions.appendChild(b);
+    loadImageWithLoading(im, ent.file, ent.word, {
+      loadHost: b,
+      fade: false,
+      onReady: () => {
+        b.disabled = false;
+      },
+      onError: () => {
+        b.disabled = false;
+      },
+    });
   });
   updateQuizImageStats();
 }

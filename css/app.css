@@ -196,10 +196,12 @@
       justify-content: center;
     }
     .figure.is-loading > img,
-    .figure.is-loading > .category-spell-emoji {
+    .figure.is-loading > .category-spell-emoji,
+    button.option-image.is-loading img {
       visibility: hidden !important;
     }
-    .figure.is-loading::before {
+    .figure.is-loading::before,
+    button.option-image.is-loading::before {
       content: "";
       position: absolute;
       width: 36px;
@@ -209,13 +211,21 @@
       border-radius: 50%;
       animation: figure-loading-spin 0.75s linear infinite;
     }
-    .figure.is-loading::after {
+    .figure.is-loading::after,
+    button.option-image.is-loading::after {
       content: "加载中…";
       position: absolute;
       margin-top: 52px;
       font-size: 0.88rem;
       font-weight: 700;
       color: var(--muted);
+    }
+    button.option-image.is-loading {
+      position: relative;
+    }
+    button.option-image.is-loading::after {
+      margin-top: 44px;
+      font-size: 0.82rem;
     }
     @keyframes figure-loading-spin {
       to { transform: rotate(360deg); }

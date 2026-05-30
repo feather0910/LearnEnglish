@@ -26,30 +26,41 @@ document.querySelectorAll("[data-back]").forEach((btn) => {
   });
 });
 
-function setFigureLoading(figureEl, loading) {
-  if (!figureEl) return;
-  figureEl.classList.toggle("is-loading", loading);
-  figureEl.setAttribute("aria-busy", loading ? "true" : "false");
+function setMediaLoading(hostEl, loading) {
+  if (!hostEl) return;
+  hostEl.classList.toggle("is-loading", loading);
+  hostEl.setAttribute("aria-busy", loading ? "true" : "false");
 }
 
-function setImageWithFade(imgEl, src, alt, options) {
+function setFigureLoading(figureEl, loading) {
+  setMediaLoading(figureEl, loading);
+}
+
+/** 预加载后再显示图片；loadHost 为显示 loading 的容器（.figure 或 .option-image） */
+function loadImageWithLoading(imgEl, src, alt, options) {
   if (!imgEl) return;
-  const onError = options && options.onError;
-  const figure = imgEl.closest(".figure");
+  const opts = options || {};
+  const onError = opts.onError;
+  const onReady = opts.onReady;
+  const useFade = opts.fade !== false;
+  const loadHost =
+    opts.loadHost || imgEl.closest(".figure") || imgEl.closest(".option-image");
   const url = (src || "").trim();
 
   if (!url) {
     imgEl.removeAttribute("src");
     imgEl.classList.add("hidden");
-    setFigureLoading(figure, false);
+    setMediaLoading(loadHost, false);
+    if (onReady) onReady();
     return;
   }
 
   if (!imgEl._loadGen) imgEl._loadGen = 0;
   const gen = ++imgEl._loadGen;
 
-  setFigureLoading(figure, true);
-  imgEl.classList.add("hidden", "fading");
+  setMediaLoading(loadHost, true);
+  imgEl.classList.add("hidden");
+  if (useFade) imgEl.classList.add("fading");
   imgEl.removeAttribute("src");
 
   const preload = new Image();
@@ -58,18 +69,30 @@ function setImageWithFade(imgEl, src, alt, options) {
     imgEl.src = url;
     imgEl.alt = alt || "";
     imgEl.classList.remove("hidden");
-    requestAnimationFrame(() => {
+    const done = () => {
       if (gen !== imgEl._loadGen) return;
-      imgEl.classList.remove("fading");
-      setFigureLoading(figure, false);
-    });
+      if (useFade) imgEl.classList.remove("fading");
+      setMediaLoading(loadHost, false);
+      if (onReady) onReady();
+    };
+    if (useFade) requestAnimationFrame(done);
+    else done();
   };
   preload.onerror = () => {
     if (gen !== imgEl._loadGen) return;
     imgEl.classList.add("hidden");
     imgEl.removeAttribute("src");
-    setFigureLoading(figure, false);
+    setMediaLoading(loadHost, false);
     if (onError) onError();
+    else if (onReady) onReady();
   };
   preload.src = url;
+}
+
+function setImageWithFade(imgEl, src, alt, options) {
+  loadImageWithLoading(imgEl, src, alt, {
+    ...options,
+    loadHost: imgEl && imgEl.closest(".figure"),
+    fade: true,
+  });
 }
