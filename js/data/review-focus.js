@@ -53,6 +53,13 @@ const REVIEW_FOCUS_ZH = {
   "put up": "搭建，支起",
   camping: "露营",
   "buckle up": "系好安全带",
+  instruments: "乐器（总称）",
+  note: "音符",
+  tambourine: "铃鼓",
+  maracas: "沙锤",
+  triangle: "三角铁（乐器）",
+  "wood block": "木鱼（打击乐）",
+  cymbals: "钹，镲",
 };
 
 const REVIEW_FOCUS_EMOJI = {
@@ -74,6 +81,13 @@ const REVIEW_FOCUS_EMOJI = {
   "put up": "🏕️",
   camping: "🏕️",
   "buckle up": "💺",
+  instruments: "🎸",
+  note: "🎵",
+  tambourine: "🪇",
+  maracas: "🪇",
+  triangle: "🔺",
+  "wood block": "🪵",
+  cymbals: "🥁",
 };
 
 function vocabEntryByWord(word) {
