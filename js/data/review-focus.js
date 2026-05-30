@@ -57,7 +57,7 @@ const REVIEW_FOCUS_ZH = {
   note: "音符",
   tambourine: "铃鼓",
   maracas: "沙锤",
-  triangle: "三角形，三角铁（乐器）",
+  triangle: "三角形，三角铁",
   "wood block": "木鱼（打击乐）",
   cymbals: "钹，镲",
 };

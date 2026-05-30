@@ -71,10 +71,17 @@ function spellPhraseVariants(phrase) {
   return results;
 }
 
+/** 旧词形 → 合并后的 canonical 拼写（如 triangle bar → triangle） */
+function spellCanonicalAnswer(s) {
+  const n = normalizeSpellAnswer(s);
+  if (n === "triangle bar") return "triangle";
+  return n;
+}
+
 /** 拼写是否算对：忽略多余空格、可连写、末词单复数互通 */
 function spellAnswersMatch(guess, target) {
-  const gSet = spellPhraseVariants(guess);
-  const tSet = spellPhraseVariants(target);
+  const gSet = spellPhraseVariants(spellCanonicalAnswer(guess));
+  const tSet = spellPhraseVariants(spellCanonicalAnswer(target));
   for (const g of gSet) {
     if (tSet.has(g)) return true;
   }
