@@ -67,9 +67,9 @@ function nextCategorySpellWord() {
 
 function checkCategorySpell() {
   if (!categorySpellCurrent) return;
-  const guess = normalizeSpellAnswer(categorySpellInput.value);
-  const target = normalizeSpellAnswer(categorySpellCurrent.word);
-  if (guess === target) {
+  const guess = categorySpellInput.value;
+  const target = categorySpellCurrent.word;
+  if (spellAnswersMatch(guess, target)) {
     markWordSeen(categorySpellCurrent.word);
     categorySpellRoundCorrect += 1;
     updateStreakLine(categorySpellStreakEl, true);

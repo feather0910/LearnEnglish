@@ -87,9 +87,9 @@ function nextSpellWord() {
 
 function checkSpell() {
   if (!spellCurrent) return;
-  const guess = spellInput.value.trim().toLowerCase();
-  const target = spellCurrent.word.trim().toLowerCase();
-  if (guess === target) {
+  const guess = spellInput.value;
+  const target = spellCurrent.word;
+  if (spellAnswersMatch(guess, target)) {
     markWordSeen(spellCurrent.word);
     spellRoundCorrect += 1;
     updateStreakLine(spellStreakEl, true);
@@ -194,13 +194,6 @@ if (spellContinue) {
 bindSpeakButton(document.getElementById("spell-speak"), () =>
   spellCurrent ? spellCurrent.word : ""
 );
-
-function normalizeSpellAnswer(s) {
-  return String(s || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, " ");
-}
 
 function openCategoryPicker() {
   renderCategoryPicker();
