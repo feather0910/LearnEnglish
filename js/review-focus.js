@@ -19,7 +19,7 @@ function renderReviewPicker() {
     btn.className = "category-card";
     btn.innerHTML =
       `<span class="category-card-title">${escapeHtml(g.label)}</span>` +
-      `<div class="category-card-meta">重点词 ${g.words.length} 个</div>`;
+      `<div class="category-card-meta">重点词 ${getReviewFocusWords(g).length} 个</div>`;
     btn.addEventListener("click", () => openReviewList(g.id));
     reviewPickerGrid.appendChild(btn);
   });
@@ -50,7 +50,7 @@ function bindReviewStartSpell(groupId) {
 function renderReviewList(group) {
   if (!reviewFocusList) return;
   reviewFocusList.innerHTML = "";
-  group.words.forEach((word) => {
+  getReviewFocusWords(group).forEach((word) => {
     const entry = reviewFocusEntry(word);
     const zhRaw = entry.zh != null ? String(entry.zh).trim() : "";
     const zhLine = zhRaw

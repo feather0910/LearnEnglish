@@ -55,6 +55,16 @@ const REVIEW_FOCUS_GROUPS = [
     ],
   },
   {
+    id: "2025-05-23",
+    label: "5月23日",
+    categoryId: "body",
+  },
+  {
+    id: "2025-05-27",
+    label: "5月27日",
+    categoryId: "occupation",
+  },
+  {
     id: "2025-05-30",
     label: "5月30日",
     words: [
@@ -222,6 +232,20 @@ const REVIEW_FOCUS_EMOJI = {
   cymbals: "🥁",
 };
 
+/** 日期词表：显式 words，或按分类同步（与分类拼写一致） */
+function getReviewFocusWords(group) {
+  if (!group) return [];
+  if (group.categoryId) {
+    const out = [];
+    for (let i = 0; i < VOCAB.length; i += 1) {
+      const cats = VOCAB[i].category || [];
+      if (cats.includes(group.categoryId)) out.push(VOCAB[i].word);
+    }
+    return out;
+  }
+  return group.words || [];
+}
+
 function vocabEntryByWord(word) {
   const idx = vocabIndexByWord(word);
   return idx >= 0 ? VOCAB[idx] : null;
@@ -239,7 +263,7 @@ function buildReviewFocusSpellQueue(groupId) {
   const group = REVIEW_FOCUS_GROUPS.find((g) => g.id === groupId);
   if (!group) return [];
   const indices = [];
-  group.words.forEach((w) => {
+  getReviewFocusWords(group).forEach((w) => {
     const idx = vocabIndexByWord(w);
     if (idx >= 0) indices.push(idx);
   });
