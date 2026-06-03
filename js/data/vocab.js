@@ -345,5 +345,9 @@ const VOCAB_SUPPLEMENT = [
   { word: "follow", zh: "遵守，跟随", emoji: "👣", supplement: true },
   { word: "wait", zh: "等待", emoji: "⏳", supplement: true },
   { word: "money", zh: "钱", emoji: "💰", supplement: true },
+  { word: "corn", zh: "玉米", emoji: "🌽", supplement: true },
+  { word: "collar", zh: "衣领，项圈", emoji: "👔", supplement: true },
+  { word: "elf", zh: "小精灵，精灵", emoji: "🧝", supplement: true },
+  { word: "elevator", zh: "电梯", emoji: "🛗", supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);
