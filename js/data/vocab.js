@@ -349,5 +349,9 @@ const VOCAB_SUPPLEMENT = [
   { word: "collar", zh: "衣领，项圈", file: "images/collar.jpg", emoji: "👔", supplement: true },
   { word: "elf", zh: "小精灵，精灵", file: "images/elf.jpg", emoji: "🧝", supplement: true },
   { word: "elevator", zh: "电梯", file: "images/elevator.jpg", emoji: "🛗", supplement: true },
+  { word: "car", zh: "汽车", file: "images/car.jpg", emoji: "🚗", supplement: true },
+  { word: "carrot", zh: "胡萝卜", file: "images/carrot.jpg", emoji: "🥕", supplement: true },
+  { word: "cow", zh: "牛，奶牛", file: "images/cow.jpg", emoji: "🐄", supplement: true },
+  { word: "bell", zh: "铃铛，钟", file: "images/bell.jpg", emoji: "🔔", supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);
