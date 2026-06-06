@@ -353,5 +353,9 @@ const VOCAB_SUPPLEMENT = [
   { word: "carrot", zh: "胡萝卜", file: "images/carrot.jpg", emoji: "🥕", supplement: true },
   { word: "cow", zh: "牛，奶牛", file: "images/cow.jpg", emoji: "🐄", supplement: true },
   { word: "bell", zh: "铃铛，钟", file: "images/bell.jpg", emoji: "🔔", supplement: true },
+  { word: "goes", zh: "去，走（第三人称）", emoji: "🚶", supplement: true },
+  { word: "this", zh: "这个", emoji: "👉", supplement: true },
+  { word: "way", zh: "路，方向；方式", emoji: "🛤️", supplement: true },
+  { word: "that", zh: "那个", emoji: "👈", supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);
