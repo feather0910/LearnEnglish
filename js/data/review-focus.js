@@ -127,6 +127,16 @@ const REVIEW_FOCUS_GROUPS = [
       "sock",
     ],
   },
+  {
+    id: "2025-06-06",
+    label: "6月6日",
+    words: [
+      "goes",
+      "this",
+      "way",
+      "that",
+    ],
+  },
 ];
 
 /** 复习词中文（词表无 zh 或需覆盖时使用） */
@@ -174,6 +184,10 @@ const REVIEW_FOCUS_ZH = {
   collar: "衣领，项圈",
   elf: "小精灵，精灵",
   elevator: "电梯",
+  goes: "去，走（第三人称）",
+  this: "这个",
+  way: "路，方向；方式",
+  that: "那个",
   "sleeping bags": "睡袋",
   tent: "帐篷",
   van: "面包车，厢式货车",
@@ -245,6 +259,10 @@ const REVIEW_FOCUS_EMOJI = {
   collar: "👔",
   elf: "🧝",
   elevator: "🛗",
+  goes: "🚶",
+  this: "👉",
+  way: "🛤️",
+  that: "👈",
   "sleeping bags": "🛏️",
   tent: "⛺",
   van: "🚐",
