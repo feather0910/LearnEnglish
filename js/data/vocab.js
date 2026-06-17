@@ -378,5 +378,13 @@ const VOCAB_SUPPLEMENT = [
   { word: "save", zh: "拯救，挽救", file: "images/save.jpg", emoji: "🦸", supplement: true },
   { word: "fast", zh: "快的，快速地", file: "images/fast.jpg", emoji: "💨", supplement: true },
   { word: "into", zh: "进入，到…里面", file: "images/into.jpg", emoji: "➡️", supplement: true },
+  { word: "mail", zh: "邮件，信件", file: "images/mail.jpg", emoji: "📧", supplement: true },
+  { word: "paper", zh: "纸，纸张", file: "images/paper.jpg", emoji: "📄", supplement: true },
+  { word: "carrier", zh: "邮递员，快递员", file: "images/carrier.jpg", emoji: "📬", supplement: true },
+  { word: "post office", zh: "邮局", file: "images/post office.jpg", emoji: "🏤", supplement: true },
+  { word: "address", zh: "地址", file: "images/address.jpg", emoji: "📍", supplement: true },
+  { word: "zip code", zh: "邮政编码，邮编", file: "images/zip code.jpg", emoji: "🔢", supplement: true },
+  { word: "stamp", zh: "邮票", file: "images/stamp.jpg", emoji: "💌", supplement: true },
+  { word: "envelope", zh: "信封", file: "images/envelope.jpg", emoji: "✉️", supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);
