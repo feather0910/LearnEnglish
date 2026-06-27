@@ -9,6 +9,7 @@ function openWordListPicker() {
   renderWordListPicker();
   showView("wordListPicker");
 }
+window.openWordListPicker = openWordListPicker;
 
 function renderWordListPicker() {
   if (!wordListPickerGrid) return;
