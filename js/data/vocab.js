@@ -426,5 +426,11 @@ const VOCAB_SUPPLEMENT = [
   { word: "looks", zh: "看（第三人称）", file: "images/looks.jpg", emoji: "👁️", supplement: true },
   { word: "jumps", zh: "跳（第三人称）", file: "images/jumps.jpg", emoji: "🦘", supplement: true },
   { word: "see", zh: "看见", file: "images/see.jpg", emoji: "👁️", supplement: true },
+  { word: "comes", zh: "来，来到（第三人称）", file: "images/comes.jpg", emoji: "🚶", supplement: true },
+  { word: "gets", zh: "得到，变得（第三人称）", file: "images/gets.jpg", emoji: "🤲", supplement: true },
+  { word: "says", zh: "说（第三人称）", file: "images/says.jpg", emoji: "💬", supplement: true },
+  { word: "faster", zh: "更快地，更快", file: "images/faster.jpg", emoji: "💨", supplement: true },
+  { word: "will", zh: "将，会（助动词）", file: "images/will.jpg", emoji: "🔮", supplement: true },
+  { word: "go", zh: "去，走", file: "images/go.jpg", emoji: "➡️", supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);

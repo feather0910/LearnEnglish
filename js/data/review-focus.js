@@ -245,6 +245,11 @@ const REVIEW_FOCUS_GROUPS = [
       "picture",
     ],
   },
+  {
+    id: "2025-06-27",
+    label: "6月27日",
+    words: ["comes", "gets", "says", "faster", "will", "go"],
+  },
 ];
 
 /** 复习词中文（词表无 zh 或需覆盖时使用） */
@@ -381,6 +386,12 @@ const REVIEW_FOCUS_ZH = {
   triangle: "三角形，三角铁",
   "wood block": "木鱼（打击乐）",
   cymbals: "钹，镲",
+  comes: "来，来到（第三人称）",
+  gets: "得到，变得（第三人称）",
+  says: "说（第三人称）",
+  faster: "更快地，更快",
+  will: "将，会（助动词）",
+  go: "去，走",
 };
 
 const REVIEW_FOCUS_EMOJI = {
@@ -516,6 +527,12 @@ const REVIEW_FOCUS_EMOJI = {
   triangle: "🔺",
   "wood block": "🪵",
   cymbals: "🥁",
+  comes: "🚶",
+  gets: "🤲",
+  says: "💬",
+  faster: "💨",
+  will: "🔮",
+  go: "➡️",
 };
 
 /** 日期词表：显式 words，或按分类同步（与分类拼写一致） */
