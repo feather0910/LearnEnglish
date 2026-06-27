@@ -17,11 +17,11 @@ document.getElementById("go-wordbook").addEventListener("click", () => {
   renderWordbook();
   showView("wordbook");
 });
-document.getElementById("go-review-focus").addEventListener("click", () => {
-  openReviewPicker();
+document.getElementById("go-review-focus")?.addEventListener("click", () => {
+  if (typeof openReviewPicker === "function") openReviewPicker();
 });
-document.getElementById("go-word-list").addEventListener("click", () => {
-  openWordListPicker();
+document.getElementById("go-word-list")?.addEventListener("click", () => {
+  if (typeof openWordListPicker === "function") openWordListPicker();
 });
 
 const settingAutoNext = document.getElementById("setting-auto-next");

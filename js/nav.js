@@ -16,9 +16,11 @@ const views = {
 };
 
 function showView(name) {
-  Object.keys(views).forEach((k) =>
-    views[k].classList.toggle("hidden", k !== name)
-  );
+  Object.keys(views).forEach((k) => {
+    const el = views[k];
+    if (!el) return;
+    el.classList.toggle("hidden", k !== name);
+  });
 }
 
 document.querySelectorAll("[data-back]").forEach((btn) => {
