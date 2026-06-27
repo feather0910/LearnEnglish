@@ -23,6 +23,11 @@
         <span class="mode-title">重点复习词汇</span>
         <span class="mode-desc">按日期查看需要巩固的单词</span>
       </button>
+      <button type="button" id="go-word-list" class="mode-card mode-card--span">
+        <span class="mode-icon">📋📖</span>
+        <span class="mode-title">Word List</span>
+        <span class="mode-desc">按教材词表浏览与练习</span>
+      </button>
       <button type="button" id="go-flash" class="mode-card">
         <span class="mode-icon">🃏✨</span>
         <span class="mode-title">卡片模式</span>
@@ -96,6 +101,30 @@
       <button type="button" id="review-start-spell">开始测试</button>
     </div>
     <div id="review-focus-list" class="wordbook-list"></div>
+  </section>
+
+  <!-- Word List：选词表 -->
+  <section id="view-word-list-picker" class="panel hidden">
+    <div class="toolbar">
+      <button type="button" class="secondary" id="word-list-picker-back">← 返回</button>
+      <span class="spacer"></span>
+    </div>
+    <h2 style="margin:0 0 0.35rem;font-size:1.35rem;">Word List</h2>
+    <p class="lead" style="margin-bottom:0.75rem;">选择一个词表，查看单词并练习拼写。</p>
+    <div class="category-picker-grid" id="word-list-picker-grid"></div>
+  </section>
+
+  <!-- Word List：词表 -->
+  <section id="view-word-list" class="panel hidden">
+    <div class="toolbar">
+      <button type="button" class="secondary" id="word-list-back">← 返回选词表</button>
+      <span class="spacer"></span>
+    </div>
+    <h2 class="wordbook-panel-title" id="word-list-title">Word List</h2>
+    <div class="btn-row review-list-actions">
+      <button type="button" id="word-list-start-spell">开始测试</button>
+    </div>
+    <div id="word-list-items" class="wordbook-list"></div>
   </section>
 
   <!-- 分类拼写：选分类 -->
@@ -288,12 +317,14 @@
   <script src="js/round-ui.js"></script>
   <script src="js/nav.js"></script>
   <script src="js/data/review-focus.js"></script>
+  <script src="js/data/word-list.js"></script>
   <script src="js/wordbook.js"></script>
   <script src="js/modes/flash.js"></script>
   <script src="js/modes/quiz-word.js"></script>
   <script src="js/modes/quiz-image.js"></script>
   <script src="js/modes/spell.js"></script>
   <script src="js/review-focus.js"></script>
+  <script src="js/word-list.js"></script>
   <script src="js/modes/category-spell.js"></script>
   <script src="js/modes/first.js"></script>
   <script src="js/main.js"></script>

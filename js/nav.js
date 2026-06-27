@@ -11,6 +11,8 @@ const views = {
   wordbook: document.getElementById("view-wordbook"),
   reviewPicker: document.getElementById("view-review-picker"),
   reviewList: document.getElementById("view-review-list"),
+  wordListPicker: document.getElementById("view-word-list-picker"),
+  wordList: document.getElementById("view-word-list"),
 };
 
 function showView(name) {

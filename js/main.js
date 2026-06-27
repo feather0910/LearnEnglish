@@ -20,6 +20,9 @@ document.getElementById("go-wordbook").addEventListener("click", () => {
 document.getElementById("go-review-focus").addEventListener("click", () => {
   openReviewPicker();
 });
+document.getElementById("go-word-list").addEventListener("click", () => {
+  openWordListPicker();
+});
 
 const settingAutoNext = document.getElementById("setting-auto-next");
 const settingSoundOn = document.getElementById("setting-sound-on");

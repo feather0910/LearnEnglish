@@ -76,5 +76,6 @@ if (roundOverlayAgainBtn) {
     else if (m === "first") startFirst();
     else if (m === "categorySpell" && lastCategorySpellId) startCategorySpell(lastCategorySpellId);
     else if (m === "reviewFocusSpell" && lastReviewFocusGroupId) startReviewFocusSpell(lastReviewFocusGroupId);
+    else if (m === "wordListSpell" && lastWordListGroupId) startWordListSpell(lastWordListGroupId);
   });
 }
