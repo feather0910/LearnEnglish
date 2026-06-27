@@ -409,5 +409,14 @@ const VOCAB_SUPPLEMENT = [
   { word: "slippers", zh: "拖鞋", file: "images/slippers.jpg", emoji: "🥿", supplement: true },
   { word: "stool", zh: "凳子", file: "images/stool.jpg", emoji: "🪑", supplement: true },
   { word: "stair", zh: "楼梯台阶", file: "images/stair.jpg", emoji: "🪜", supplement: true },
+  { word: "basket", zh: "篮子", file: "images/basket.jpg", emoji: "🧺", supplement: true },
+  { word: "bird", zh: "鸟", file: "images/bird.jpg", emoji: "🐦", supplement: true },
+  { word: "Bibs", zh: "比布斯（故事角色）", file: "images/Bibs.jpg", emoji: "👧", supplement: true },
+  { word: "is", zh: "是", file: "images/is.jpg", emoji: "✅", supplement: true },
+  { word: "here", zh: "这里", file: "images/here.jpg", emoji: "📍", supplement: true },
+  { word: "look", zh: "看", file: "images/look.jpg", emoji: "👀", supplement: true },
+  { word: "looks", zh: "看（第三人称）", file: "images/looks.jpg", emoji: "👁️", supplement: true },
+  { word: "jumps", zh: "跳（第三人称）", file: "images/jumps.jpg", emoji: "🦘", supplement: true },
+  { word: "see", zh: "看见", file: "images/see.jpg", emoji: "👁️", supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);

@@ -5,6 +5,7 @@ let spellCurrent = null;
 let spellRoundCorrect = 0;
 let spellCountedThisQuestion = false;
 let spellReviewGroupId = null;
+let spellWordListGroupId = null;
 
 const spellImg = document.getElementById("spell-img");
 const spellEmoji = document.getElementById("spell-emoji");
@@ -27,7 +28,10 @@ function updateSpellStats() {
     return;
   }
   let prefix = "";
-  if (spellReviewGroupId) {
+  if (spellWordListGroupId) {
+    const g = WORD_LIST_GROUPS.find((x) => x.id === spellWordListGroupId);
+    if (g) prefix = `「${g.label}」· `;
+  } else if (spellReviewGroupId) {
     const g = REVIEW_FOCUS_GROUPS.find((x) => x.id === spellReviewGroupId);
     if (g) prefix = `「${g.label}」· `;
   }
@@ -70,7 +74,9 @@ function advanceSpellQuestion() {
   spellInput.value = "";
   spellAnswerLine.classList.add("hidden");
   if (spellPos >= spellQueue.length) {
-    const mode = spellReviewGroupId ? "reviewFocusSpell" : "spell";
+    let mode = "spell";
+    if (spellWordListGroupId) mode = "wordListSpell";
+    else if (spellReviewGroupId) mode = "reviewFocusSpell";
     showRoundComplete(mode, spellRoundCorrect, spellQueue.length);
     spellCurrent = null;
     return;
@@ -116,7 +122,9 @@ function checkSpell() {
 
 function startSpell() {
   spellReviewGroupId = null;
+  spellWordListGroupId = null;
   lastReviewFocusGroupId = null;
+  lastWordListGroupId = null;
   if (spellContinue) spellContinue.classList.add("hidden");
   spellQueue = buildRoundQueueIndices();
   spellPos = 0;
@@ -139,7 +147,9 @@ function startReviewFocusSpell(groupId) {
   if (!group) return;
   if (typeof buildReviewFocusSpellQueue !== "function") return;
   spellReviewGroupId = groupId;
+  spellWordListGroupId = null;
   lastReviewFocusGroupId = groupId;
+  lastWordListGroupId = null;
   if (spellContinue) spellContinue.classList.add("hidden");
   spellQueue = buildReviewFocusSpellQueue(groupId);
   spellPos = 0;
@@ -158,9 +168,39 @@ function startReviewFocusSpell(groupId) {
 }
 window.startReviewFocusSpell = startReviewFocusSpell;
 
+function startWordListSpell(groupId) {
+  const group = WORD_LIST_GROUPS.find((g) => g.id === groupId);
+  if (!group) return;
+  if (typeof buildWordListSpellQueue !== "function") return;
+  spellWordListGroupId = groupId;
+  spellReviewGroupId = null;
+  lastWordListGroupId = groupId;
+  lastReviewFocusGroupId = null;
+  if (spellContinue) spellContinue.classList.add("hidden");
+  spellQueue = buildWordListSpellQueue(groupId);
+  spellPos = 0;
+  spellRoundCorrect = 0;
+  spellCountedThisQuestion = false;
+  resetStreakLine([spellStreakEl]);
+  showView("spell");
+  if (!spellQueue.length) {
+    spellStats.textContent = "该词表暂无可用词条";
+    return;
+  }
+  spellMsg.classList.add("hidden");
+  spellInput.value = "";
+  spellAnswerLine.classList.add("hidden");
+  renderSpellQuestion();
+}
+window.startWordListSpell = startWordListSpell;
+
 document.getElementById("spell-back")?.addEventListener("click", () => {
   hideRoundComplete();
-  if (spellReviewGroupId) {
+  if (spellWordListGroupId) {
+    const id = spellWordListGroupId;
+    spellWordListGroupId = null;
+    openWordList(id);
+  } else if (spellReviewGroupId) {
     const id = spellReviewGroupId;
     spellReviewGroupId = null;
     openReviewList(id);
