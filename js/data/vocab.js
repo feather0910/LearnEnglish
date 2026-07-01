@@ -432,5 +432,13 @@ const VOCAB_SUPPLEMENT = [
   { word: "faster", zh: "更快地，更快", file: "images/faster.jpg", emoji: "💨", supplement: true },
   { word: "will", zh: "将，会（助动词）", file: "images/will.jpg", emoji: "🔮", supplement: true },
   { word: "go", zh: "去，走", file: "images/go.jpg", emoji: "➡️", supplement: true },
+  { word: "office", zh: "办公室", file: "images/office.jpg", emoji: "🏢", category: ["occupation"], supplement: true },
+  { word: "programmer", zh: "程序员", file: "images/programmer.jpg", emoji: "💻", category: ["occupation"], supplement: true },
+  { word: "computer", zh: "电脑，计算机", file: "images/computer.jpg", emoji: "🖥️", supplement: true },
+  { word: "homemaker", zh: "全职家长，家庭主妇/主夫", file: "images/homemaker.jpg", emoji: "🏠", category: ["occupation"], supplement: true },
+  { word: "artist", zh: "艺术家，画家", file: "images/artist.jpg", emoji: "🎨", category: ["occupation"], supplement: true },
+  { word: "zookeeper", zh: "动物园管理员，饲养员", file: "images/zookeeper.jpg", emoji: "🦁", category: ["occupation"], supplement: true },
+  { word: "racecar driver", zh: "赛车手", file: "images/racecar driver.jpg", emoji: "🏎️", category: ["occupation"], supplement: true },
+  { word: "jumping", zh: "跳，跳跃（ing）", file: "images/jumping.jpg", emoji: "🤸", supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);

@@ -250,6 +250,25 @@ const REVIEW_FOCUS_GROUPS = [
     label: "6月27日",
     words: ["comes", "gets", "says", "faster", "will", "go"],
   },
+  {
+    id: "2025-07-01",
+    label: "7月1日",
+    words: [
+      "doctor",
+      "businessman",
+      "office",
+      "programmer",
+      "computer",
+      "scientist",
+      "homemaker",
+      "artist",
+      "dancer",
+      "zookeeper",
+      "racecar driver",
+      "into",
+      "jumping",
+    ],
+  },
 ];
 
 /** 复习词中文（词表无 zh 或需覆盖时使用） */
@@ -392,6 +411,14 @@ const REVIEW_FOCUS_ZH = {
   faster: "更快地，更快",
   will: "将，会（助动词）",
   go: "去，走",
+  office: "办公室",
+  programmer: "程序员",
+  computer: "电脑，计算机",
+  homemaker: "全职家长，家庭主妇/主夫",
+  artist: "艺术家，画家",
+  zookeeper: "动物园管理员，饲养员",
+  "racecar driver": "赛车手",
+  jumping: "跳，跳跃（ing）",
 };
 
 const REVIEW_FOCUS_EMOJI = {
@@ -533,6 +560,14 @@ const REVIEW_FOCUS_EMOJI = {
   faster: "💨",
   will: "🔮",
   go: "➡️",
+  office: "🏢",
+  programmer: "💻",
+  computer: "🖥️",
+  homemaker: "🏠",
+  artist: "🎨",
+  zookeeper: "🦁",
+  "racecar driver": "🏎️",
+  jumping: "🤸",
 };
 
 /** 日期词表：显式 words，或按分类同步（与分类拼写一致） */
