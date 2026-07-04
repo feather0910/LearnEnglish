@@ -269,6 +269,25 @@ const REVIEW_FOCUS_GROUPS = [
       "jumping",
     ],
   },
+  {
+    id: "2025-07-04",
+    label: "7月4日",
+    words: [
+      "sports camp",
+      "tee-ball",
+      "badminton",
+      "piano",
+      "lessons",
+      "amusement park",
+      "rides",
+      "art",
+      "clay",
+      "practice",
+      "visit",
+      "into",
+      "jumping",
+    ],
+  },
 ];
 
 /** 复习词中文（词表无 zh 或需覆盖时使用） */
@@ -419,6 +438,16 @@ const REVIEW_FOCUS_ZH = {
   zookeeper: "动物园管理员，饲养员",
   "racecar driver": "赛车手",
   jumping: "跳，跳跃（ing）",
+  "sports camp": "运动夏令营",
+  "tee-ball": "幼儿棒球，T-ball",
+  badminton: "羽毛球",
+  lessons: "课程，补习课",
+  "amusement park": "游乐园",
+  rides: "游乐设施，乘坐",
+  art: "美术，艺术",
+  clay: "黏土，陶泥",
+  practice: "练习",
+  visit: "拜访，看望",
 };
 
 const REVIEW_FOCUS_EMOJI = {
@@ -568,6 +597,16 @@ const REVIEW_FOCUS_EMOJI = {
   zookeeper: "🦁",
   "racecar driver": "🏎️",
   jumping: "🤸",
+  "sports camp": "⚽",
+  "tee-ball": "⚾",
+  badminton: "🏸",
+  lessons: "📚",
+  "amusement park": "🎡",
+  rides: "🎢",
+  art: "🖌️",
+  clay: "🧱",
+  practice: "📝",
+  visit: "👋",
 };
 
 /** 日期词表：显式 words，或按分类同步（与分类拼写一致） */

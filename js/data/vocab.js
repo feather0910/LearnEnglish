@@ -440,5 +440,15 @@ const VOCAB_SUPPLEMENT = [
   { word: "zookeeper", zh: "动物园管理员，饲养员", file: "images/zookeeper.jpg", emoji: "🦁", category: ["occupation"], supplement: true },
   { word: "racecar driver", zh: "赛车手", file: "images/racecar driver.jpg", emoji: "🏎️", category: ["occupation"], supplement: true },
   { word: "jumping", zh: "跳，跳跃（ing）", file: "images/jumping.jpg", emoji: "🤸", supplement: true },
+  { word: "sports camp", zh: "运动夏令营", file: "images/sports camp.jpg", emoji: "⚽", supplement: true },
+  { word: "tee-ball", zh: "幼儿棒球，T-ball", file: "images/tee-ball.jpg", emoji: "⚾", supplement: true },
+  { word: "badminton", zh: "羽毛球", file: "images/badminton.jpg", emoji: "🏸", supplement: true },
+  { word: "lessons", zh: "课程，补习课", file: "images/lessons.jpg", emoji: "📚", supplement: true },
+  { word: "amusement park", zh: "游乐园", file: "images/amusement park.jpg", emoji: "🎡", supplement: true },
+  { word: "rides", zh: "游乐设施，乘坐", file: "images/rides.jpg", emoji: "🎢", supplement: true },
+  { word: "art", zh: "美术，艺术", file: "images/art.jpg", emoji: "🖌️", supplement: true },
+  { word: "clay", zh: "黏土，陶泥", file: "images/clay.jpg", emoji: "🧱", supplement: true },
+  { word: "practice", zh: "练习", file: "images/practice.jpg", emoji: "📝", supplement: true },
+  { word: "visit", zh: "拜访，看望", file: "images/visit.jpg", emoji: "👋", supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);
