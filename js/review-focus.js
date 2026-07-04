@@ -13,7 +13,7 @@ function openReviewPicker() {
 function renderReviewPicker() {
   if (!reviewPickerGrid) return;
   reviewPickerGrid.innerHTML = "";
-  REVIEW_FOCUS_GROUPS.forEach((g) => {
+  [...REVIEW_FOCUS_GROUPS].reverse().forEach((g) => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "category-card";
