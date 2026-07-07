@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>24点</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+<div class="app">
+  <section class="panel">
+    <div class="toolbar">
+      <a href="main.html" class="secondary back-btn">← 返回主菜单</a>
+      <span class="spacer"></span>
+    </div>
+    <div class="home-hero">
+      <div class="hero-emoji">🔢🎯</div>
+      <h1>24点</h1>
+      <p class="lead">用下面四个数字，加、减、乘、除和括号，算出 24。每个数字只能用一次。</p>
+    </div>
+    <div id="game24-numbers" class="game24-numbers" aria-live="polite"></div>
+    <label class="game24-input-label" for="game24-input">你的算式</label>
+    <input type="text" id="game24-input" class="game24-input" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="例如 (8-3)×(6-1)" />
+    <div class="game24-keypad btn-row" id="game24-keypad">
+      <button type="button" class="secondary game24-key" data-token="+">+</button>
+      <button type="button" class="secondary game24-key" data-token="-">−</button>
+      <button type="button" class="secondary game24-key" data-token="×">×</button>
+      <button type="button" class="secondary game24-key" data-token="÷">÷</button>
+      <button type="button" class="secondary game24-key" data-token="(">(</button>
+      <button type="button" class="secondary game24-key" data-token=")">)</button>
+    </div>
+    <div class="btn-row game24-actions">
+      <button type="button" id="game24-check">检查</button>
+      <button type="button" class="secondary" id="game24-clear">清空</button>
+      <button type="button" class="secondary" id="game24-deal">换一题</button>
+    </div>
+    <p id="game24-msg" class="msg hidden" role="status"></p>
+  </section>
+</div>
+
+<div id="confetti-root" class="confetti-root" aria-hidden="true"></div>
+<div id="praise-toast" class="praise-toast" role="status" aria-live="assertive" aria-atomic="true"></div>
+
+<script src="js/utils.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/game24.js"></script>
+</body>
+</html>
