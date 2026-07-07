@@ -1,4 +1,4 @@
-"""Split index.html into css/ and js/ per maintenance plan."""
+"""Split english.html into css/ and js/ per maintenance plan."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
