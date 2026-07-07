@@ -1,8 +1,8 @@
-"""Split index.html into css/ and js/ per maintenance plan."""
+"""Split english.html into css/ and js/ per maintenance plan."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-lines = (ROOT / "index.html").read_text(encoding="utf-8").splitlines(keepends=True)
+lines = (ROOT / "english.html").read_text(encoding="utf-8").splitlines(keepends=True)
 
 def write(rel: str, content: str) -> None:
     p = ROOT / rel
@@ -113,5 +113,5 @@ index = f"""<!DOCTYPE html>
 {body_html}{scripts}</body>
 </html>
 """
-(ROOT / "index.html").write_text(index, encoding="utf-8")
+(ROOT / "english.html").write_text(index, encoding="utf-8")
 print("Split complete.")
