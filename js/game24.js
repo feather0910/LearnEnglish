@@ -1,12 +1,14 @@
 /* ===== 24 点小游戏 ===== */
 let game24Numbers = [];
 let game24Solution = "";
+let game24Tokens = [];
 
 const game24NumbersEl = document.getElementById("game24-numbers");
-const game24Input = document.getElementById("game24-input");
+const game24ExprEl = document.getElementById("game24-expr");
 const game24Msg = document.getElementById("game24-msg");
 
 const GAME24_EPS = 1e-9;
+const GAME24_EXPR_EMPTY = "点击数字和符号组成算式";
 
 function game24FindSolution(nums) {
   const nodes = nums.map((n) => ({ value: n, expr: String(n) }));
@@ -81,6 +83,49 @@ function pickGame24Deal() {
   return { nums: fallback, solution: game24FindSolution(fallback) || "1*2*3*4" };
 }
 
+function game24NumberCounts(nums) {
+  const counts = {};
+  nums.forEach((n) => {
+    counts[n] = (counts[n] || 0) + 1;
+  });
+  return counts;
+}
+
+function game24RemainingNumberCounts() {
+  const counts = game24NumberCounts(game24Numbers);
+  game24Tokens.forEach((token) => {
+    if (!/^\d+$/.test(token)) return;
+    const n = Number(token);
+    if (counts[n]) counts[n] -= 1;
+  });
+  return counts;
+}
+
+function canAppendGame24Number(n) {
+  const counts = game24RemainingNumberCounts();
+  return (counts[n] || 0) > 0;
+}
+
+function renderGame24Expr() {
+  if (!game24ExprEl) return;
+  if (!game24Tokens.length) {
+    game24ExprEl.textContent = GAME24_EXPR_EMPTY;
+    game24ExprEl.classList.add("is-empty");
+    return;
+  }
+  game24ExprEl.textContent = game24Tokens.join("");
+  game24ExprEl.classList.remove("is-empty");
+}
+
+function updateGame24NumberCards() {
+  if (!game24NumbersEl) return;
+  const remaining = game24RemainingNumberCounts();
+  game24NumbersEl.querySelectorAll(".game24-number-card").forEach((btn) => {
+    const n = Number(btn.textContent);
+    btn.disabled = !(remaining[n] > 0);
+  });
+}
+
 function renderGame24Numbers() {
   if (!game24NumbersEl) return;
   game24NumbersEl.innerHTML = "";
@@ -92,6 +137,7 @@ function renderGame24Numbers() {
     card.addEventListener("click", () => appendGame24Token(String(n)));
     game24NumbersEl.appendChild(card);
   });
+  updateGame24NumberCards();
 }
 
 function dealGame24() {
@@ -104,14 +150,31 @@ function dealGame24() {
 }
 
 function appendGame24Token(token) {
-  if (!game24Input) return;
-  game24Input.value += token;
-  game24Input.focus();
+  if (!token) return;
+  if (/^\d+$/.test(token)) {
+    const n = Number(token);
+    if (!canAppendGame24Number(n)) return;
+  }
+  game24Tokens.push(token);
+  renderGame24Expr();
+  updateGame24NumberCards();
+}
+
+function backspaceGame24() {
+  game24Tokens.pop();
+  renderGame24Expr();
+  updateGame24NumberCards();
 }
 
 function clearGame24Input() {
-  if (game24Input) game24Input.value = "";
+  game24Tokens = [];
+  renderGame24Expr();
+  updateGame24NumberCards();
   hideGame24Msg();
+}
+
+function getGame24Expr() {
+  return game24Tokens.join("");
 }
 
 function hideGame24Msg() {
@@ -229,10 +292,9 @@ function evaluateGame24Tokens(tokens) {
 }
 
 function checkGame24() {
-  const raw = game24Input ? game24Input.value : "";
-  const expr = normalizeGame24Expr(raw);
+  const expr = normalizeGame24Expr(getGame24Expr());
   if (!expr) {
-    showGame24Msg("先输入算式哦～", false);
+    showGame24Msg("先点数字和符号组成算式哦～", false);
     return;
   }
 
@@ -264,7 +326,7 @@ function checkGame24() {
   showGame24Msg(`结果是 ${Number.isInteger(result) ? result : result.toFixed(2)}，还不是 24，再试试～`, false);
 }
 
-document.querySelectorAll(".game24-key").forEach((btn) => {
+document.querySelectorAll(".game24-key[data-token]").forEach((btn) => {
   btn.addEventListener("click", () => appendGame24Token(btn.dataset.token || ""));
 });
 
@@ -272,12 +334,6 @@ document.getElementById("game24-check")?.addEventListener("click", checkGame24);
 document.getElementById("game24-clear")?.addEventListener("click", clearGame24Input);
 document.getElementById("game24-deal")?.addEventListener("click", dealGame24);
 document.getElementById("game24-answer")?.addEventListener("click", showGame24Answer);
-
-game24Input?.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    checkGame24();
-  }
-});
+document.getElementById("game24-backspace")?.addEventListener("click", backspaceGame24);
 
 dealGame24();

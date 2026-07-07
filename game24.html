@@ -16,11 +16,11 @@
     <div class="home-hero">
       <div class="hero-emoji">🔢🎯</div>
       <h1>24点</h1>
-      <p class="lead">用下面四个数字，加、减、乘、除和括号，算出 24。每个数字只能用一次。</p>
+      <p class="lead">用下面四个数字，加、减、乘、除和括号，算出 24。点击下方数字和符号组成算式，每个数字只能用一次。</p>
     </div>
     <div id="game24-numbers" class="game24-numbers" aria-live="polite"></div>
-    <label class="game24-input-label" for="game24-input">你的算式</label>
-    <input type="text" id="game24-input" class="game24-input" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="例如 (8-3)×(6-1)" />
+    <p class="game24-input-label">你的算式</p>
+    <div id="game24-expr" class="game24-expr is-empty" aria-live="polite" aria-label="你的算式">点击数字和符号组成算式</div>
     <div class="game24-keypad btn-row" id="game24-keypad">
       <button type="button" class="secondary game24-key" data-token="+">+</button>
       <button type="button" class="secondary game24-key" data-token="-">−</button>
@@ -28,6 +28,7 @@
       <button type="button" class="secondary game24-key" data-token="÷">÷</button>
       <button type="button" class="secondary game24-key" data-token="(">(</button>
       <button type="button" class="secondary game24-key" data-token=")">)</button>
+      <button type="button" class="secondary game24-key" id="game24-backspace">退格</button>
     </div>
     <div class="btn-row game24-actions">
       <button type="button" id="game24-check">检查</button>

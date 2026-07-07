@@ -830,6 +830,31 @@
       font-size: 1.35rem;
       margin-top: 0.35rem;
     }
+    .game24-expr {
+      width: 100%;
+      min-height: 3.25rem;
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-top: 0.35rem;
+      padding: 0.75rem 0.85rem;
+      border-radius: 14px;
+      border: 1px solid #fed7aa;
+      background: #fff7ed;
+      word-break: break-all;
+      user-select: none;
+      cursor: default;
+    }
+    .game24-expr.is-empty {
+      color: var(--muted);
+      font-size: 1.02rem;
+      font-weight: 700;
+    }
+    .game24-number-card:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: grayscale(0.15);
+      box-shadow: none;
+    }
     .game24-keypad {
       margin-top: 0.65rem;
     }
