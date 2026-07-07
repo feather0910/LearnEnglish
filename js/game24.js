@@ -187,6 +187,43 @@ function showGame24Msg(text, ok) {
   if (!game24Msg) return;
   game24Msg.textContent = text;
   game24Msg.className = ok ? "msg ok" : "msg bad";
+  game24Msg.classList.remove("hidden");
+}
+
+function game24SolutionToTokens(solution) {
+  const tokens = [];
+  let i = 0;
+  const s = String(solution || "");
+  while (i < s.length) {
+    const ch = s[i];
+    if (ch >= "0" && ch <= "9") {
+      let num = ch;
+      i += 1;
+      while (i < s.length && s[i] >= "0" && s[i] <= "9") {
+        num += s[i];
+        i += 1;
+      }
+      tokens.push(num);
+      continue;
+    }
+    if (ch === "*") {
+      tokens.push("×");
+      i += 1;
+      continue;
+    }
+    if (ch === "/") {
+      tokens.push("÷");
+      i += 1;
+      continue;
+    }
+    if ("+-()".includes(ch)) {
+      tokens.push(ch);
+      i += 1;
+      continue;
+    }
+    i += 1;
+  }
+  return tokens;
 }
 
 function showGame24Answer() {
@@ -197,7 +234,12 @@ function showGame24Answer() {
     showGame24Msg("暂时没有算出答案，请换一题。", false);
     return;
   }
-  showGame24Msg(`参考答案：${formatGame24Solution(game24Solution)}`, true);
+  game24Tokens = game24SolutionToTokens(game24Solution);
+  renderGame24Expr();
+  updateGame24NumberCards();
+  const formatted = formatGame24Solution(game24Solution);
+  showGame24Msg(`参考答案：${formatted}`, true);
+  game24Msg?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function normalizeGame24Expr(raw) {
