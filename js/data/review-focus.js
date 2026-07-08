@@ -288,6 +288,28 @@ const REVIEW_FOCUS_GROUPS = [
       "jumping",
     ],
   },
+  {
+    id: "2026-07-08",
+    label: "7月8日",
+    words: [
+      "tree",
+      "squirrel",
+      "why",
+      "are",
+      "my",
+      "sports camp",
+      "tee-ball",
+      "badminton",
+      "piano",
+      "lessons",
+      "amusement park",
+      "rides",
+      "art",
+      "clay",
+      "practice",
+      "visit",
+    ],
+  },
 ];
 
 /** 复习词中文（词表无 zh 或需覆盖时使用） */
@@ -448,6 +470,11 @@ const REVIEW_FOCUS_ZH = {
   clay: "黏土，陶泥",
   practice: "练习",
   visit: "拜访，看望",
+  tree: "树",
+  squirrel: "松鼠",
+  why: "为什么",
+  are: "是（复数/你）",
+  my: "我的",
 };
 
 const REVIEW_FOCUS_EMOJI = {
@@ -607,6 +634,11 @@ const REVIEW_FOCUS_EMOJI = {
   clay: "🧱",
   practice: "📝",
   visit: "👋",
+  tree: "🌳",
+  squirrel: "🐿️",
+  why: "❓",
+  are: "✅",
+  my: "👤",
 };
 
 /** 日期词表：显式 words，或按分类同步（与分类拼写一致） */

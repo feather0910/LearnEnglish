@@ -450,5 +450,10 @@ const VOCAB_SUPPLEMENT = [
   { word: "clay", zh: "黏土，陶泥", file: "images/clay.jpg", emoji: "🧱", supplement: true },
   { word: "practice", zh: "练习", file: "images/practice.jpg", emoji: "📝", supplement: true },
   { word: "visit", zh: "拜访，看望", file: "images/visit.jpg", emoji: "👋", supplement: true },
+  { word: "tree", zh: "树", emoji: "🌳", supplement: true },
+  { word: "squirrel", zh: "松鼠", emoji: "🐿️", supplement: true },
+  { word: "why", zh: "为什么", emoji: "❓", supplement: true },
+  { word: "are", zh: "是（复数/你）", emoji: "✅", supplement: true },
+  { word: "my", zh: "我的", emoji: "👤", supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);
