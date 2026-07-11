@@ -455,5 +455,12 @@ const VOCAB_SUPPLEMENT = [
   { word: "why", zh: "为什么", emoji: "❓", supplement: true },
   { word: "are", zh: "是（复数/你）", emoji: "✅", supplement: true },
   { word: "my", zh: "我的", emoji: "👤", supplement: true },
+  { word: "proud", zh: "骄傲的，自豪的", emoji: "🏆", supplement: true },
+  { word: "something", zh: "某事，某物", emoji: "✨", supplement: true },
+  { word: "learned", zh: "学会了，学到了", emoji: "📚", supplement: true },
+  { word: "many", zh: "许多，很多", emoji: "🔢", supplement: true },
+  { word: "things", zh: "东西，事物", emoji: "📦", supplement: true },
+  { word: "iguana", zh: "鬣蜥", emoji: "🦎", supplement: true },
+  { word: "bib", zh: "围嘴，围兜", emoji: "👶", supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);
