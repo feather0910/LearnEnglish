@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>字母泡泡</title>
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+<div class="app">
+  <section class="panel typing-panel">
+    <div class="toolbar">
+      <a href="index.html" class="secondary back-btn">← 返回主菜单</a>
+      <span class="spacer"></span>
+    </div>
+    <div class="home-hero typing-hero">
+      <div class="hero-emoji">🫧⌨️</div>
+      <h1>字母泡泡</h1>
+      <p class="lead">按键盘上的字母，接住掉下来的小泡泡！最好用电脑或带键盘的设备玩。</p>
+    </div>
+    <div id="typing-hud" class="typing-hud hidden">
+      <span class="typing-stat">得分 <strong id="typing-score">0</strong></span>
+      <span class="typing-stat" id="typing-streak-wrap">连击 <strong id="typing-streak">0</strong></span>
+      <span class="typing-stat">生命 <strong id="typing-lives">♥♥♥</strong></span>
+      <span class="typing-stat">时间 <strong id="typing-time">60</strong>s</span>
+    </div>
+    <div id="typing-arena" class="typing-arena hidden" aria-label="字母泡泡游戏区">
+      <div id="typing-bubbles" class="typing-bubbles"></div>
+    </div>
+    <p id="typing-msg" class="msg hidden" role="status"></p>
+    <input type="text" id="typing-input" class="typing-input-capture" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-hidden="true" tabindex="-1" />
+    <div id="typing-start" class="typing-overlay">
+      <p class="typing-overlay-lead">只练小写字母 a–z，泡泡落地前敲对就得分！</p>
+      <p class="typing-overlay-hint">最高分：<strong id="typing-best">0</strong></p>
+      <button type="button" id="typing-start-btn">开始游戏</button>
+    </div>
+    <div id="typing-end" class="typing-overlay hidden">
+      <h2 class="typing-overlay-title">本局结束</h2>
+      <p id="typing-end-body" class="typing-overlay-body"></p>
+      <div class="btn-row typing-overlay-actions">
+        <button type="button" id="typing-again-btn">再来一局</button>
+        <a href="index.html" class="secondary">返回主菜单</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="confetti-root" class="confetti-root" aria-hidden="true"></div>
+<div id="praise-toast" class="praise-toast" role="status" aria-live="assertive" aria-atomic="true"></div>
+
+<script src="js/utils.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/typing.js"></script>
+</body>
+</html>
