@@ -841,6 +841,116 @@
     .game24-actions {
       margin-top: 0.85rem;
     }
+    .typing-panel {
+      position: relative;
+    }
+    .typing-hero {
+      margin-bottom: 0.75rem;
+    }
+    .typing-hud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem 0.85rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .typing-hud strong {
+      color: var(--text);
+      font-size: 1.02rem;
+    }
+    .typing-arena {
+      position: relative;
+      height: min(52vh, 360px);
+      min-height: 260px;
+      border-radius: 16px;
+      border: 2px dashed #fdba74;
+      background: linear-gradient(180deg, #fffbeb 0%, #fff7ed 55%, #ffedd5 100%);
+      overflow: hidden;
+      cursor: text;
+    }
+    .typing-bubbles {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .typing-bubble {
+      position: absolute;
+      width: 3.25rem;
+      height: 3.25rem;
+      margin-left: -1.625rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text);
+      border: 2px solid rgba(249, 115, 22, 0.35);
+      box-shadow: 0 10px 20px rgba(249, 115, 22, 0.18);
+      user-select: none;
+      pointer-events: none;
+      transition: transform 0.15s ease, opacity 0.2s ease;
+    }
+    .typing-bubble.is-golden {
+      border-color: #eab308;
+      box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.25), 0 12px 24px rgba(234, 179, 8, 0.28);
+      color: #854d0e;
+    }
+    .typing-bubble.is-popping {
+      animation: typing-pop 0.22s ease forwards;
+    }
+    .typing-bubble.is-missed {
+      animation: typing-miss 0.28s ease forwards;
+    }
+    @keyframes typing-pop {
+      0% { transform: scale(1); opacity: 1; }
+      60% { transform: scale(1.35); opacity: 0.85; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    @keyframes typing-miss {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(12px); opacity: 0; }
+    }
+    .typing-input-capture {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .typing-overlay {
+      margin-top: 0.5rem;
+      padding: 1rem;
+      border-radius: 14px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      text-align: center;
+    }
+    .typing-overlay-lead {
+      margin: 0 0 0.5rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .typing-overlay-hint {
+      margin: 0 0 0.85rem;
+      color: var(--text);
+      font-weight: 700;
+    }
+    .typing-overlay-title {
+      margin: 0 0 0.5rem;
+      font-size: 1.35rem;
+    }
+    .typing-overlay-body {
+      margin: 0 0 0.85rem;
+      white-space: pre-line;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .typing-overlay-actions {
+      justify-content: center;
+    }
     @media (max-width: 520px) {
       .modes { grid-template-columns: 1fr; }
       .mode-card { min-height: 96px; }
