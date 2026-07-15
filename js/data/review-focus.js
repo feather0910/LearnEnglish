@@ -337,6 +337,17 @@ const REVIEW_FOCUS_GROUPS = [
       "pillow",
     ],
   },
+  {
+    id: "2026-07-15",
+    label: "7月15日",
+    words: [
+      "where",
+      "duck",
+      "under",
+      "squirrel",
+      "why",
+    ],
+  },
 ];
 
 /** 复习词中文（词表无 zh 或需覆盖时使用） */
@@ -509,6 +520,9 @@ const REVIEW_FOCUS_ZH = {
   things: "东西，事物",
   iguana: "鬣蜥",
   bib: "围嘴，围兜",
+  where: "在哪里",
+  under: "在…下面",
+  duck: "鸭子",
   dishes: "碗碟，菜肴",
   wig: "假发",
   goat: "山羊",
@@ -693,6 +707,9 @@ const REVIEW_FOCUS_EMOJI = {
   things: "📦",
   iguana: "🦎",
   bib: "👶",
+  where: "📍",
+  under: "⬇️",
+  duck: "🦆",
   dishes: "🍽️",
   wig: "💇",
   goat: "🐐",
