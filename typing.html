@@ -16,13 +16,15 @@
     <div class="home-hero typing-hero">
       <div class="hero-emoji">🫧⌨️</div>
       <h1>字母泡泡</h1>
-      <p class="lead">电脑可用键盘；手机可点下方字母，或点「打开键盘」用系统键盘。</p>
+      <p class="lead">自选难度与按键，从零基础循序渐进。电脑可用键盘；手机可点下方字母，或点「打开键盘」。</p>
     </div>
+
     <div id="typing-hud" class="typing-hud hidden">
       <span class="typing-stat">得分 <strong id="typing-score">0</strong></span>
       <span class="typing-stat" id="typing-streak-wrap">连击 <strong id="typing-streak">0</strong></span>
       <span class="typing-stat">生命 <strong id="typing-lives">♥♥♥</strong></span>
       <span class="typing-stat">时间 <strong id="typing-time">60</strong>s</span>
+      <span class="typing-stat typing-diff-tag">难度 <strong id="typing-diff-label">入门</strong></span>
     </div>
     <div id="typing-arena" class="typing-arena hidden" aria-label="字母泡泡游戏区">
       <div id="typing-bubbles" class="typing-bubbles"></div>
@@ -47,11 +49,42 @@
       maxlength="1"
       aria-label="输入字母"
     />
-    <div id="typing-start" class="typing-overlay">
-      <p class="typing-overlay-lead">只练小写字母 a–z，泡泡落地前敲对就得分！</p>
+
+    <div id="typing-setup" class="typing-overlay typing-setup">
+      <p class="typing-overlay-lead">选好难度和要练的字母，再开始接泡泡！</p>
       <p class="typing-overlay-hint">最高分：<strong id="typing-best">0</strong></p>
+
+      <div class="typing-setup-block">
+        <h3 class="typing-setup-title">难度</h3>
+        <div id="typing-diff-btns" class="typing-chip-row" role="group" aria-label="选择难度"></div>
+        <p id="typing-diff-desc" class="typing-setup-desc"></p>
+      </div>
+
+      <div class="typing-setup-block">
+        <h3 class="typing-setup-title">练习按键</h3>
+        <div id="typing-preset-groups" class="typing-chip-row typing-group-tabs" role="tablist" aria-label="练习分组"></div>
+        <div id="typing-preset-btns" class="typing-chip-row typing-preset-row" role="group" aria-label="练习预设"></div>
+        <div class="typing-key-actions">
+          <button type="button" id="typing-keys-all" class="secondary typing-mini-btn">全选</button>
+          <button type="button" id="typing-keys-clear" class="secondary typing-mini-btn">清空</button>
+          <button type="button" id="typing-keys-apply" class="secondary typing-mini-btn">套用当前预设</button>
+        </div>
+        <div id="typing-keypad" class="typing-keypad" aria-label="自定义字母键盘"></div>
+        <p id="typing-keys-hint" class="typing-setup-desc">已选 <strong id="typing-keys-count">0</strong> 个字母</p>
+      </div>
+
       <button type="button" id="typing-start-btn">开始游戏</button>
+
+      <details id="typing-history-panel" class="typing-history-panel">
+        <summary>最近练习记录</summary>
+        <div class="typing-history-toolbar">
+          <button type="button" id="typing-history-clear" class="secondary typing-mini-btn">清空历史</button>
+        </div>
+        <ul id="typing-history-list" class="typing-history-list"></ul>
+        <p id="typing-history-empty" class="typing-setup-desc">还没有练习记录，玩一局试试吧。</p>
+      </details>
     </div>
+
     <div id="typing-end" class="typing-overlay hidden">
       <h2 class="typing-overlay-title">本局结束</h2>
       <p id="typing-end-body" class="typing-overlay-body"></p>
@@ -68,6 +101,6 @@
 
 <script src="js/utils.js"></script>
 <script src="js/fx.js"></script>
-<script src="js/typing.js?v=20260718"></script>
+<script src="js/typing.js?v=20260718b"></script>
 </body>
 </html>
