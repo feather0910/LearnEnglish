@@ -61,6 +61,32 @@ const TYPING_DIFFICULTIES = {
     rampFall: 64,
     rampSpawn: 1100,
   },
+  extreme: {
+    id: "extreme",
+    label: "极速",
+    desc: "下落很快，同屏更多，反应要跟得上。",
+    fallSpeed: 78,
+    spawnMs: 1000,
+    maxBubbles: 5,
+    maxLives: 3,
+    roundSec: 60,
+    rampAt: [20],
+    rampFall: 92,
+    rampSpawn: 800,
+  },
+  insane: {
+    id: "insane",
+    label: "狂暴",
+    desc: "掉落极快、生成很密，终极考验。",
+    fallSpeed: 105,
+    spawnMs: 750,
+    maxBubbles: 6,
+    maxLives: 2,
+    roundSec: 45,
+    rampAt: [15],
+    rampFall: 125,
+    rampSpawn: 550,
+  },
 };
 
 const TYPING_PRESET_GROUPS = [
