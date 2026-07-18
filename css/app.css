@@ -885,6 +885,9 @@
       color: var(--text);
       font-size: 1.02rem;
     }
+    .typing-diff-tag strong {
+      color: var(--accent-hover);
+    }
     .typing-arena {
       position: relative;
       height: min(52vh, 360px);
@@ -998,6 +1001,175 @@
       border: 1px solid #fed7aa;
       text-align: center;
     }
+    .typing-setup {
+      text-align: left;
+      max-height: min(70vh, 640px);
+      overflow-y: auto;
+    }
+    .typing-setup > .typing-overlay-lead,
+    .typing-setup > .typing-overlay-hint,
+    .typing-setup > #typing-start-btn {
+      text-align: center;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .typing-setup > #typing-start-btn {
+      margin-top: 0.35rem;
+      margin-bottom: 0.85rem;
+    }
+    .typing-setup-block {
+      margin-bottom: 0.95rem;
+    }
+    .typing-setup-title {
+      margin: 0 0 0.45rem;
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .typing-setup-desc {
+      margin: 0.4rem 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+    .typing-chip-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0.4rem;
+      overflow-x: auto;
+      padding-bottom: 0.15rem;
+      -webkit-overflow-scrolling: touch;
+    }
+    .typing-preset-row {
+      margin-top: 0.45rem;
+      flex-wrap: wrap;
+      overflow: visible;
+    }
+    .typing-chip {
+      flex: 0 0 auto;
+      padding: 0.42rem 0.78rem;
+      border-radius: 9999px;
+      border: 1px solid #fed7aa;
+      background: #fff;
+      color: var(--text);
+      font-size: 0.86rem;
+      font-weight: 700;
+      box-shadow: none;
+    }
+    .typing-chip:hover {
+      background: #fff7ed;
+      filter: none;
+      box-shadow: none;
+    }
+    .typing-chip.is-active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-color: transparent;
+      color: #fff;
+    }
+    .typing-group-chip {
+      background: #ffedd5;
+    }
+    .typing-key-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.55rem 0 0.45rem;
+    }
+    .typing-mini-btn {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.82rem;
+      box-shadow: none;
+    }
+    .typing-keypad {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      align-items: center;
+      margin-top: 0.2rem;
+    }
+    .typing-key-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.28rem;
+    }
+    .typing-key {
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+      border-radius: 10px;
+      border: 1px solid #fdba74;
+      background: #fff;
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 800;
+      box-shadow: none;
+      text-transform: uppercase;
+    }
+    .typing-key:hover {
+      filter: none;
+      background: #fff7ed;
+      box-shadow: none;
+    }
+    .typing-key.is-on {
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      border-color: transparent;
+      color: #fff;
+    }
+    .typing-history-panel {
+      margin-top: 0.25rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #fed7aa;
+    }
+    .typing-history-panel > summary {
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--text);
+      list-style: none;
+    }
+    .typing-history-panel > summary::-webkit-details-marker {
+      display: none;
+    }
+    .typing-history-panel > summary::before {
+      content: "▸ ";
+      color: var(--accent);
+    }
+    .typing-history-panel[open] > summary::before {
+      content: "▾ ";
+    }
+    .typing-history-toolbar {
+      margin: 0.55rem 0 0.35rem;
+    }
+    .typing-history-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .typing-history-item {
+      padding: 0.55rem 0.65rem;
+      border-radius: 10px;
+      background: #fff7ed;
+      border: 1px solid #ffedd5;
+    }
+    .typing-history-main {
+      display: block;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+    .typing-history-sub {
+      display: block;
+      margin-top: 0.15rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
     .typing-overlay-lead {
       margin: 0 0 0.5rem;
       color: var(--muted);
@@ -1032,5 +1204,10 @@
       .typing-letter-key {
         height: 2.55rem;
         font-size: 1rem;
+      }
+      .typing-key {
+        width: 1.85rem;
+        height: 1.85rem;
+        font-size: 0.84rem;
       }
     }
