@@ -348,6 +348,21 @@ const REVIEW_FOCUS_GROUPS = [
       "why",
     ],
   },
+  {
+    id: "2026-07-18",
+    label: "7月18日",
+    words: [
+      "proud",
+      "something",
+      "learned",
+      "many",
+      "things",
+      "finds",
+      "kite",
+      "string",
+      "want",
+    ],
+  },
 ];
 
 /** 复习词中文（词表无 zh 或需覆盖时使用） */
@@ -523,6 +538,10 @@ const REVIEW_FOCUS_ZH = {
   where: "在哪里",
   under: "在…下面",
   duck: "鸭子",
+  finds: "找到（第三人称）",
+  kite: "风筝",
+  string: "绳子，线",
+  want: "想要",
   dishes: "碗碟，菜肴",
   wig: "假发",
   goat: "山羊",
@@ -710,6 +729,10 @@ const REVIEW_FOCUS_EMOJI = {
   where: "📍",
   under: "⬇️",
   duck: "🦆",
+  finds: "🔍",
+  kite: "🪁",
+  string: "🧵",
+  want: "🙋",
   dishes: "🍽️",
   wig: "💇",
   goat: "🐐",

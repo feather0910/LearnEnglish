@@ -464,5 +464,8 @@ const VOCAB_SUPPLEMENT = [
   { word: "bib", zh: "围嘴，围兜", emoji: "👶", supplement: true },
   { word: "where", zh: "在哪里", emoji: "📍", supplement: true },
   { word: "under", zh: "在…下面", emoji: "⬇️", supplement: true },
+  { word: "finds", zh: "找到（第三人称）", emoji: "🔍", supplement: true },
+  { word: "string", zh: "绳子，线", emoji: "🧵", supplement: true },
+  { word: "want", zh: "想要", emoji: "🙋", supplement: true },
 ];
 VOCAB.push(...VOCAB_SUPPLEMENT);
