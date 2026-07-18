@@ -12,6 +12,8 @@ const BUBBLE_COLORS = [
   "#fff7ed", "#eff6ff", "#f0fdf4", "#fdf4ff", "#fef9c3", "#fce7f3", "#ecfeff",
 ];
 
+const TYPING_PAD_ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
+
 const typingHud = document.getElementById("typing-hud");
 const typingArena = document.getElementById("typing-arena");
 const typingBubblesEl = document.getElementById("typing-bubbles");
@@ -25,6 +27,9 @@ const typingLivesEl = document.getElementById("typing-lives");
 const typingTimeEl = document.getElementById("typing-time");
 const typingBestEl = document.getElementById("typing-best");
 const typingEndBody = document.getElementById("typing-end-body");
+const typingMobileControls = document.getElementById("typing-mobile-controls");
+const typingLetterPad = document.getElementById("typing-letter-pad");
+const typingOpenKeyboardBtn = document.getElementById("typing-open-keyboard");
 
 let typingState = "idle";
 let typingBubbles = [];
@@ -258,10 +263,53 @@ function scheduleTypingCountdown() {
   }, 1000);
 }
 
+function buildTypingLetterPad() {
+  if (!typingLetterPad || typingLetterPad.dataset.ready === "1") return;
+  typingLetterPad.innerHTML = "";
+  TYPING_PAD_ROWS.forEach((row) => {
+    const rowEl = document.createElement("div");
+    rowEl.className = "typing-letter-row";
+    row.split("").forEach((letter) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "typing-letter-key";
+      btn.textContent = letter;
+      btn.dataset.letter = letter;
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        handleTypingKey(letter);
+      });
+      rowEl.appendChild(btn);
+    });
+    typingLetterPad.appendChild(rowEl);
+  });
+  typingLetterPad.dataset.ready = "1";
+}
+
+function showTypingMobileControls(show) {
+  if (!typingMobileControls) return;
+  typingMobileControls.classList.toggle("hidden", !show);
+}
+
 function focusTypingInput() {
   if (!typingInput) return;
   typingInput.value = "";
-  typingInput.focus({ preventScroll: true });
+  try {
+    typingInput.focus({ preventScroll: true });
+  } catch {
+    typingInput.focus();
+  }
+}
+
+function consumeTypingInputValue() {
+  if (!typingInput || typingState !== "playing") return;
+  const raw = String(typingInput.value || "");
+  typingInput.value = "";
+  if (!raw) return;
+  for (const ch of raw) {
+    const letter = ch.toLowerCase();
+    if (letter >= "a" && letter <= "z") handleTypingKey(letter);
+  }
 }
 
 function resetTypingRound() {
@@ -291,6 +339,8 @@ function startTypingGame() {
   if (typingEnd) typingEnd.classList.add("hidden");
   if (typingHud) typingHud.classList.remove("hidden");
   if (typingArena) typingArena.classList.remove("hidden");
+  buildTypingLetterPad();
+  showTypingMobileControls(true);
   scheduleTypingSpawn();
   scheduleTypingCountdown();
   spawnTypingBubble();
@@ -319,6 +369,8 @@ function endTypingGame() {
   stopTypingTimers();
   typingBubbles.forEach((b) => b.el?.remove());
   typingBubbles = [];
+  showTypingMobileControls(false);
+  if (typingInput) typingInput.blur();
 
   const prevBest = loadTypingHighscore();
   const isNewBest = typingScore > prevBest;
@@ -338,6 +390,10 @@ function endTypingGame() {
 
 document.getElementById("typing-start-btn")?.addEventListener("click", startTypingGame);
 document.getElementById("typing-again-btn")?.addEventListener("click", startTypingGame);
+typingOpenKeyboardBtn?.addEventListener("click", (e) => {
+  e.preventDefault();
+  focusTypingInput();
+});
 
 typingInput?.addEventListener("keydown", (e) => {
   if (typingState !== "playing") return;
@@ -346,6 +402,21 @@ typingInput?.addEventListener("keydown", (e) => {
     e.preventDefault();
     handleTypingKey(key);
     typingInput.value = "";
+  }
+});
+
+typingInput?.addEventListener("input", () => {
+  consumeTypingInputValue();
+});
+
+typingInput?.addEventListener("blur", () => {
+  if (typingState === "playing") {
+    // Keep a soft re-focus path for virtual keyboards without fighting letter-pad taps.
+    setTimeout(() => {
+      if (typingState === "playing" && document.activeElement !== typingInput) {
+        /* leave focus alone so letter-pad clicks work */
+      }
+    }, 0);
   }
 });
 
@@ -359,6 +430,11 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-typingArena?.addEventListener("click", focusTypingInput);
+typingArena?.addEventListener("pointerdown", (e) => {
+  // Don't steal focus from letter-pad buttons.
+  if (e.target && e.target.closest && e.target.closest(".typing-letter-key")) return;
+  focusTypingInput();
+});
 
+buildTypingLetterPad();
 if (typingBestEl) typingBestEl.textContent = String(loadTypingHighscore());

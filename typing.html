@@ -16,7 +16,7 @@
     <div class="home-hero typing-hero">
       <div class="hero-emoji">🫧⌨️</div>
       <h1>字母泡泡</h1>
-      <p class="lead">按键盘上的字母，接住掉下来的小泡泡！最好用电脑或带键盘的设备玩。</p>
+      <p class="lead">电脑可用键盘；手机可点下方字母，或点「打开键盘」用系统键盘。</p>
     </div>
     <div id="typing-hud" class="typing-hud hidden">
       <span class="typing-stat">得分 <strong id="typing-score">0</strong></span>
@@ -28,7 +28,25 @@
       <div id="typing-bubbles" class="typing-bubbles"></div>
     </div>
     <p id="typing-msg" class="msg hidden" role="status"></p>
-    <input type="text" id="typing-input" class="typing-input-capture" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-hidden="true" tabindex="-1" />
+    <div id="typing-mobile-controls" class="typing-mobile-controls hidden">
+      <div class="btn-row typing-keyboard-actions">
+        <button type="button" class="secondary" id="typing-open-keyboard">打开键盘</button>
+      </div>
+      <div id="typing-letter-pad" class="typing-letter-pad" aria-label="屏幕字母键盘"></div>
+    </div>
+    <input
+      type="text"
+      id="typing-input"
+      class="typing-input-capture"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="none"
+      spellcheck="false"
+      inputmode="text"
+      enterkeyhint="done"
+      maxlength="1"
+      aria-label="输入字母"
+    />
     <div id="typing-start" class="typing-overlay">
       <p class="typing-overlay-lead">只练小写字母 a–z，泡泡落地前敲对就得分！</p>
       <p class="typing-overlay-hint">最高分：<strong id="typing-best">0</strong></p>
@@ -50,6 +68,6 @@
 
 <script src="js/utils.js"></script>
 <script src="js/fx.js"></script>
-<script src="js/typing.js"></script>
+<script src="js/typing.js?v=20260718"></script>
 </body>
 </html>

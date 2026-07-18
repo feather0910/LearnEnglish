@@ -940,10 +940,55 @@
     }
     .typing-input-capture {
       position: absolute;
+      left: -9999px;
       width: 1px;
       height: 1px;
-      opacity: 0;
-      pointer-events: none;
+      opacity: 0.01;
+      font-size: 16px;
+      border: 0;
+      padding: 0;
+      margin: 0;
+    }
+    .typing-mobile-controls {
+      margin-top: 0.75rem;
+    }
+    .typing-keyboard-actions {
+      margin-top: 0;
+      margin-bottom: 0.55rem;
+      justify-content: center;
+    }
+    .typing-letter-pad {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 0.55rem;
+      border-radius: 14px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+    }
+    .typing-letter-row {
+      display: flex;
+      justify-content: center;
+      gap: 0.28rem;
+    }
+    .typing-letter-key {
+      flex: 0 0 auto;
+      min-width: 1.85rem;
+      width: clamp(1.7rem, 8vw, 2.35rem);
+      height: 2.35rem;
+      padding: 0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-transform: lowercase;
+      background: #fff;
+      color: var(--text);
+      border: 1px solid #fdba74;
+      box-shadow: 0 4px 10px rgba(249, 115, 22, 0.12);
+    }
+    .typing-letter-key:active {
+      transform: scale(0.94);
+      background: #ffedd5;
     }
     .typing-overlay {
       margin-top: 0.5rem;
@@ -980,4 +1025,12 @@
       .modes { grid-template-columns: 1fr; }
       .mode-card { min-height: 96px; }
       .game24-numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .typing-arena {
+        height: min(38vh, 280px);
+        min-height: 200px;
+      }
+      .typing-letter-key {
+        height: 2.55rem;
+        font-size: 1rem;
+      }
     }
