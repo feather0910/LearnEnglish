@@ -2,13 +2,30 @@
 let game24Numbers = [];
 let game24Solution = "";
 let game24Tokens = [];
+let game24Mode = "play";
+let game24SolvePicks = [];
 
 const game24NumbersEl = document.getElementById("game24-numbers");
 const game24ExprEl = document.getElementById("game24-expr");
 const game24Msg = document.getElementById("game24-msg");
+const game24Lead = document.getElementById("game24-lead");
+const game24PlayPanel = document.getElementById("game24-play");
+const game24SolvePanel = document.getElementById("game24-solve");
+const game24SolveSlots = document.getElementById("game24-solve-slots");
+const game24SolvePad = document.getElementById("game24-solve-pad");
+const game24SolveResult = document.getElementById("game24-solve-result");
 
 const GAME24_EPS = 1e-9;
 const GAME24_EXPR_EMPTY = "点击数字和符号组成算式";
+const GAME24_CARD_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+
+function game24CardLabel(n) {
+  if (n === 1) return "A";
+  if (n === 11) return "J";
+  if (n === 12) return "Q";
+  if (n === 13) return "K";
+  return String(n);
+}
 
 function game24FindSolution(nums) {
   const nodes = nums.map((n) => ({ value: n, expr: String(n) }));
@@ -67,7 +84,12 @@ function formatGame24Solution(expr) {
     if (!wrapsWhole) break;
     s = s.slice(1, -1);
   }
-  return s.replace(/\*/g, "×").replace(/\//g, "÷");
+  s = s.replace(/\*/g, "×").replace(/\//g, "÷");
+  return s
+    .replace(/11/g, "J")
+    .replace(/12/g, "Q")
+    .replace(/13/g, "K")
+    .replace(/(^|[^\d])1(?!\d)/g, "$1A");
 }
 
 function pickGame24Deal() {
@@ -121,7 +143,7 @@ function updateGame24NumberCards() {
   if (!game24NumbersEl) return;
   const remaining = game24RemainingNumberCounts();
   game24NumbersEl.querySelectorAll(".game24-number-card").forEach((btn) => {
-    const n = Number(btn.textContent);
+    const n = Number(btn.dataset.value || btn.textContent);
     btn.disabled = !(remaining[n] > 0);
   });
 }
@@ -133,6 +155,7 @@ function renderGame24Numbers() {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "game24-number-card";
+    card.dataset.value = String(n);
     card.textContent = String(n);
     card.addEventListener("click", () => appendGame24Token(String(n)));
     game24NumbersEl.appendChild(card);
@@ -368,6 +391,138 @@ function checkGame24() {
   showGame24Msg(`结果是 ${Number.isInteger(result) ? result : result.toFixed(2)}，还不是 24，再试试～`, false);
 }
 
+/* ===== 求解模式 ===== */
+function hideGame24SolveResult() {
+  if (!game24SolveResult) return;
+  game24SolveResult.className = "game24-solve-result hidden";
+  game24SolveResult.textContent = "";
+}
+
+function showGame24SolveResult(text, ok) {
+  if (!game24SolveResult) return;
+  game24SolveResult.textContent = text;
+  game24SolveResult.className = ok ? "game24-solve-result is-ok" : "game24-solve-result is-bad";
+}
+
+function renderGame24SolveSlots() {
+  if (!game24SolveSlots) return;
+  game24SolveSlots.innerHTML = "";
+  for (let i = 0; i < 4; i += 1) {
+    const slot = document.createElement("button");
+    slot.type = "button";
+    slot.className = "game24-number-card game24-solve-slot";
+    if (i < game24SolvePicks.length) {
+      const n = game24SolvePicks[i];
+      slot.textContent = game24CardLabel(n);
+      slot.dataset.value = String(n);
+      slot.classList.add("is-filled");
+      slot.addEventListener("click", () => {
+        game24SolvePicks.splice(i, 1);
+        renderGame24SolveSlots();
+        updateGame24SolvePad();
+        hideGame24SolveResult();
+        hideGame24Msg();
+      });
+    } else {
+      slot.textContent = "?";
+      slot.classList.add("is-empty");
+      slot.disabled = true;
+    }
+    game24SolveSlots.appendChild(slot);
+  }
+}
+
+function updateGame24SolvePad() {
+  if (!game24SolvePad) return;
+  const full = game24SolvePicks.length >= 4;
+  game24SolvePad.querySelectorAll(".game24-solve-card").forEach((btn) => {
+    btn.disabled = full;
+  });
+}
+
+function buildGame24SolvePad() {
+  if (!game24SolvePad || game24SolvePad.dataset.ready === "1") return;
+  game24SolvePad.innerHTML = "";
+  GAME24_CARD_VALUES.forEach((n) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "secondary game24-solve-card";
+    btn.textContent = game24CardLabel(n);
+    btn.dataset.value = String(n);
+    btn.addEventListener("click", () => {
+      if (game24SolvePicks.length >= 4) {
+        showGame24Msg("已经选满 4 张牌啦，点「求解」或清空后再选。", false);
+        return;
+      }
+      game24SolvePicks.push(n);
+      renderGame24SolveSlots();
+      updateGame24SolvePad();
+      hideGame24SolveResult();
+      hideGame24Msg();
+    });
+    game24SolvePad.appendChild(btn);
+  });
+  game24SolvePad.dataset.ready = "1";
+}
+
+function clearGame24Solve() {
+  game24SolvePicks = [];
+  renderGame24SolveSlots();
+  updateGame24SolvePad();
+  hideGame24SolveResult();
+  hideGame24Msg();
+}
+
+function runGame24Solve() {
+  if (game24SolvePicks.length !== 4) {
+    showGame24Msg("请先选满 4 张牌。", false);
+    hideGame24SolveResult();
+    return;
+  }
+  const nums = game24SolvePicks.slice();
+  const solution = game24FindSolution(nums);
+  const labels = nums.map(game24CardLabel).join("、");
+  if (!solution) {
+    showGame24SolveResult(`选牌：${labels}\n这组牌算不出 24（无解）。`, false);
+    showGame24Msg("这组牌无解。", false);
+    return;
+  }
+  const formatted = formatGame24Solution(solution);
+  showGame24SolveResult(`选牌：${labels}\n答案：${formatted}`, true);
+  showGame24Msg(`答案：${formatted}`, true);
+  spawnConfetti(1.2);
+  showPraiseToast("求出答案啦！");
+  game24SolveResult?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function setGame24Mode(mode) {
+  game24Mode = mode === "solve" ? "solve" : "play";
+  const playTab = document.getElementById("game24-tab-play");
+  const solveTab = document.getElementById("game24-tab-solve");
+  if (playTab) {
+    playTab.classList.toggle("is-active", game24Mode === "play");
+    playTab.setAttribute("aria-selected", game24Mode === "play" ? "true" : "false");
+  }
+  if (solveTab) {
+    solveTab.classList.toggle("is-active", game24Mode === "solve");
+    solveTab.setAttribute("aria-selected", game24Mode === "solve" ? "true" : "false");
+  }
+  if (game24PlayPanel) game24PlayPanel.classList.toggle("hidden", game24Mode !== "play");
+  if (game24SolvePanel) game24SolvePanel.classList.toggle("hidden", game24Mode !== "solve");
+  if (game24Lead) {
+    game24Lead.textContent =
+      game24Mode === "solve"
+        ? "输入 4 张牌，立刻求出 24 点答案。A=1，J=11，Q=12，K=13。"
+        : "用四个数字算出 24。每个数字只能用一次。";
+  }
+  hideGame24Msg();
+  if (game24Mode === "solve") {
+    buildGame24SolvePad();
+    renderGame24SolveSlots();
+    updateGame24SolvePad();
+  }
+}
+
 document.querySelectorAll(".game24-key[data-token]").forEach((btn) => {
   btn.addEventListener("click", () => appendGame24Token(btn.dataset.token || ""));
 });
@@ -377,5 +532,10 @@ document.getElementById("game24-clear")?.addEventListener("click", clearGame24In
 document.getElementById("game24-deal")?.addEventListener("click", dealGame24);
 document.getElementById("game24-answer")?.addEventListener("click", showGame24Answer);
 document.getElementById("game24-backspace")?.addEventListener("click", backspaceGame24);
+document.getElementById("game24-solve-run")?.addEventListener("click", runGame24Solve);
+document.getElementById("game24-solve-clear")?.addEventListener("click", clearGame24Solve);
+document.getElementById("game24-tab-play")?.addEventListener("click", () => setGame24Mode("play"));
+document.getElementById("game24-tab-solve")?.addEventListener("click", () => setGame24Mode("solve"));
 
 dealGame24();
+setGame24Mode("play");
