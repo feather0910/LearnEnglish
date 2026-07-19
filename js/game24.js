@@ -28,14 +28,24 @@ function game24CardLabel(n) {
 }
 
 function game24FindSolution(nums) {
-  const nodes = nums.map((n) => ({ value: n, expr: String(n) }));
-  return game24SolveNodes(nodes);
+  const all = game24FindAllSolutions(nums);
+  return all.length ? all[0] : null;
 }
 
-function game24SolveNodes(nodes) {
+function game24FindAllSolutions(nums) {
+  const nodes = nums.map((n) => ({ value: n, expr: String(n) }));
+  const found = new Set();
+  game24CollectSolutions(nodes, found);
+  return [...found].sort((a, b) => a.length - b.length || a.localeCompare(b));
+}
+
+function game24CollectSolutions(nodes, found) {
   if (nodes.length === 1) {
-    if (Math.abs(nodes[0].value - 24) < GAME24_EPS) return nodes[0].expr;
-    return null;
+    if (Math.abs(nodes[0].value - 24) < GAME24_EPS) {
+      const key = formatGame24Solution(nodes[0].expr);
+      if (key) found.add(key);
+    }
+    return;
   }
   for (let i = 0; i < nodes.length; i += 1) {
     for (let j = i + 1; j < nodes.length; j += 1) {
@@ -56,16 +66,14 @@ function game24SolveNodes(nodes) {
       }
       for (const next of candidates) {
         if (!Number.isFinite(next.value)) continue;
-        const found = game24SolveNodes([...rest, next]);
-        if (found) return found;
+        game24CollectSolutions([...rest, next], found);
       }
     }
   }
-  return null;
 }
 
 function game24HasSolution(nums) {
-  return game24FindSolution(nums) !== null;
+  return game24FindAllSolutions(nums).length > 0;
 }
 
 function formatGame24Solution(expr) {
@@ -396,12 +404,54 @@ function hideGame24SolveResult() {
   if (!game24SolveResult) return;
   game24SolveResult.className = "game24-solve-result hidden";
   game24SolveResult.textContent = "";
+  game24SolveResult.innerHTML = "";
 }
 
 function showGame24SolveResult(text, ok) {
   if (!game24SolveResult) return;
   game24SolveResult.textContent = text;
   game24SolveResult.className = ok ? "game24-solve-result is-ok" : "game24-solve-result is-bad";
+}
+
+function showGame24SolveAllResults(labels, solutions) {
+  if (!game24SolveResult) return;
+  game24SolveResult.className = "game24-solve-result is-ok";
+  game24SolveResult.innerHTML = "";
+
+  const head = document.createElement("p");
+  head.className = "game24-solve-head";
+  head.textContent = `选牌：${labels} · 共 ${solutions.length} 种解法`;
+  game24SolveResult.appendChild(head);
+
+  const list = document.createElement("ol");
+  list.className = "game24-solve-list";
+  solutions.forEach((expr) => {
+    const li = document.createElement("li");
+    li.textContent = expr;
+    list.appendChild(li);
+  });
+  game24SolveResult.appendChild(list);
+}
+
+function runGame24Solve() {
+  if (game24SolvePicks.length !== 4) {
+    showGame24Msg("请先选满 4 张牌。", false);
+    hideGame24SolveResult();
+    return;
+  }
+  const nums = game24SolvePicks.slice();
+  const solutions = game24FindAllSolutions(nums);
+  const labels = nums.map(game24CardLabel).join("、");
+  if (!solutions.length) {
+    showGame24SolveResult(`选牌：${labels}\n这组牌算不出 24（无解）。`, false);
+    showGame24Msg("这组牌无解。", false);
+    return;
+  }
+  showGame24SolveAllResults(labels, solutions);
+  showGame24Msg(`共找到 ${solutions.length} 种解法`, true);
+  spawnConfetti(1.2);
+  showPraiseToast("求出答案啦！");
+  game24SolveResult?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function renderGame24SolveSlots() {
@@ -473,28 +523,6 @@ function clearGame24Solve() {
   hideGame24Msg();
 }
 
-function runGame24Solve() {
-  if (game24SolvePicks.length !== 4) {
-    showGame24Msg("请先选满 4 张牌。", false);
-    hideGame24SolveResult();
-    return;
-  }
-  const nums = game24SolvePicks.slice();
-  const solution = game24FindSolution(nums);
-  const labels = nums.map(game24CardLabel).join("、");
-  if (!solution) {
-    showGame24SolveResult(`选牌：${labels}\n这组牌算不出 24（无解）。`, false);
-    showGame24Msg("这组牌无解。", false);
-    return;
-  }
-  const formatted = formatGame24Solution(solution);
-  showGame24SolveResult(`选牌：${labels}\n答案：${formatted}`, true);
-  showGame24Msg(`答案：${formatted}`, true);
-  spawnConfetti(1.2);
-  showPraiseToast("求出答案啦！");
-  game24SolveResult?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
-
 function setGame24Mode(mode) {
   game24Mode = mode === "solve" ? "solve" : "play";
   const playTab = document.getElementById("game24-tab-play");
@@ -512,7 +540,7 @@ function setGame24Mode(mode) {
   if (game24Lead) {
     game24Lead.textContent =
       game24Mode === "solve"
-        ? "输入 4 张牌，立刻求出 24 点答案。A=1，J=11，Q=12，K=13。"
+        ? "输入 4 张牌，立刻求出全部 24 点解法。A=1，J=11，Q=12，K=13。"
         : "用四个数字算出 24。每个数字只能用一次。";
   }
   hideGame24Msg();

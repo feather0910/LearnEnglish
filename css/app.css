@@ -931,6 +931,21 @@
       background: #fef2f2;
       color: #991b1b;
     }
+    .game24-solve-head {
+      margin: 0 0 0.55rem;
+      font-weight: 800;
+    }
+    .game24-solve-list {
+      margin: 0;
+      padding-left: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .game24-solve-list li {
+      font-weight: 800;
+      line-height: 1.35;
+    }
     .typing-panel {
       position: relative;
     }
